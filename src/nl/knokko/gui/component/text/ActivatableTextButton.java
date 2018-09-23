@@ -2,6 +2,7 @@ package nl.knokko.gui.component.text;
 
 import nl.knokko.gui.render.GuiRenderer;
 import nl.knokko.gui.texture.GuiTexture;
+import nl.knokko.gui.util.Condition;
 import nl.knokko.gui.util.TextBuilder;
 import nl.knokko.gui.util.TextBuilder.Properties;
 
@@ -36,10 +37,5 @@ public class ActivatableTextButton extends TextButton {
     public void setActiveProperties(Properties properties){
         activeProperties = properties;
         activeTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, activeProperties, IMAGE_WIDTH, IMAGE_HEIGHT));
-    }
-    
-    public static interface Condition {
-        
-        boolean isTrue();
     }
 }
