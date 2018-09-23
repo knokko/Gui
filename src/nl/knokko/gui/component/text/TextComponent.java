@@ -60,28 +60,37 @@ public class TextComponent extends AbstractGuiComponent {
 		texture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, properties, IMAGE_WIDTH, IMAGE_HEIGHT));
 	}
 	
+        @Override
 	public void init() {
 		updateTexture();
 	}
 
+        @Override
 	public void update() {}
 
+        @Override
 	public void render(GuiRenderer renderer) {
 		renderer.renderTexture(texture, 0, 0, 1, 1);
 	}
 
+        @Override
 	public void click(float x, float y, int button) {}
 
+        @Override
 	public void clickOut(int button) {}
 
+        @Override
 	public boolean scroll(float amount) {
 		return false;
 	}
 
+        @Override
 	public void keyPressed(int keyCode) {}
 	
+        @Override
 	public void keyPressed(char character) {}
 
+        @Override
 	public void keyReleased(int keyCode) {}
 	
 	public void setText(String newText){
