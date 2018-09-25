@@ -25,15 +25,15 @@ package nl.knokko.gui.component;
 
 import nl.knokko.gui.render.GuiRenderer;
 
-public class WrapperComponent extends AbstractGuiComponent {
+public class WrapperComponent<C extends GuiComponent> extends AbstractGuiComponent {
     
-    protected GuiComponent component;
+    protected C component;
     
-    public WrapperComponent(GuiComponent component){
+    public WrapperComponent(C component){
         this.component = component;
     }
     
-    public void setComponent(GuiComponent component){
+    public void setComponent(C component){
         this.component = component;
         if(component != null){
             component.setState(state);
@@ -41,7 +41,7 @@ public class WrapperComponent extends AbstractGuiComponent {
         }
     }
     
-    public GuiComponent getComponent(){
+    public C getComponent(){
         return component;
     }
     
