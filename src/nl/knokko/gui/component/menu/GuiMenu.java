@@ -62,6 +62,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		components = new ArrayList<SubComponent>();
 	}
 	
+    @Override
 	public void init(){
 		directRefresh = false;
 		addComponents();
@@ -71,6 +72,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 	
 	protected abstract void addComponents();
 
+    @Override
 	public void update() {
 		for(SubComponent component : components)
 			if(component.isActive())
@@ -96,13 +98,17 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		}
 	}
 
+    @Override
 	public void render(GuiRenderer renderer) {
-		renderer.clear(getBackgroundColor());
+        GuiColor background = getBackgroundColor();
+        if(background != null)
+            renderer.clear(background);
 		for(SubComponent component : components)
 			if(component.isActive())
 				component.render(renderer);
 	}
 
+    @Override
 	public void click(float x, float y, int button) {
 		x += screenCenterX;
 		y += screenCenterY;
@@ -111,12 +117,14 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 				component.click(x, y, button);
 	}
 
+    @Override
 	public void clickOut(int button) {
 		for(SubComponent component : components)
 			if(component.isActive())
 				component.getComponent().clickOut(button);
 	}
 
+    @Override
 	public boolean scroll(float amount) {
 		SubComponent component = getComponentAt(state.getMouseX() + screenCenterX, state.getMouseY() + screenCenterY);
 		if(component != null && component.getComponent().scroll(amount))
@@ -132,18 +140,21 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		return screenCenterY != prevCenterY;
 	}
 	
+    @Override
 	public void keyPressed(int keyCode) {
 		for(SubComponent component : components)
 			if(component.isActive())
 				component.component.keyPressed(keyCode);
 	}
 	
+    @Override
 	public void keyPressed(char character) {
 		for(SubComponent component : components)
 			if(component.isActive())
 				component.component.keyPressed(character);
 	}
 
+    @Override
 	public void keyReleased(int keyCode) {
 		for(SubComponent component : components)
 			if(component.isActive())
@@ -262,22 +273,27 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		
 		public class State implements RelativeComponentState.Dynamic.State {
 
+            @Override
 			public GuiComponentState parent() {
 				return GuiMenu.this.state;
 			}
 
+            @Override
 			public float minX() {
 				return minX - screenCenterX;
 			}
 
+            @Override
 			public float minY() {
 				return minY - screenCenterY;
 			}
 
+            @Override
 			public float maxX() {
 				return maxX - screenCenterX;
 			}
 
+            @Override
 			public float maxY() {
 				return maxY - screenCenterY;
 			}
