@@ -97,6 +97,19 @@ public final class TextBuilder {
 	public static class Properties {
 		
 		public static final Font DEFAULT_BUTTON_FONT = new Font("TimesRoman", 0, 30);
+		public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
+		
+		public static Properties createLabel(Color textColor, Color backgroundColor) {
+			return createText(DEFAULT_BUTTON_FONT, textColor, backgroundColor);
+		}
+		
+		public static Properties createLabel(Color textColor) {
+			return createLabel(textColor, TRANSPARENT);
+		}
+		
+		public static Properties createLabel() {
+			return createLabel(Color.BLACK);
+		}
 		
 		public static Properties createText(Font font, Color textColor, Color backgroundColor){
 			return new Properties(font, textColor, backgroundColor, backgroundColor, HorAlignment.LEFT, VerAlignment.MIDDLE, 0, 0, 0, 0);
