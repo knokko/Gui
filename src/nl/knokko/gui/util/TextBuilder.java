@@ -97,6 +97,8 @@ public final class TextBuilder {
 	public static class Properties {
 		
 		public static final Font DEFAULT_BUTTON_FONT = new Font("TimesRoman", 0, 30);
+		public static final Font DEFAULT_EDIT_FONT = new Font("Verdana", Font.ITALIC, 30);
+		
 		public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 		
 		public static Properties createLabel(Color textColor, Color backgroundColor) {
@@ -109,6 +111,26 @@ public final class TextBuilder {
 		
 		public static Properties createLabel() {
 			return createLabel(Color.BLACK);
+		}
+		
+		public static Properties createEdit(Font font, Color backgroundColor, Color borderColor, Color textColor) {
+			return new Properties(font, textColor, backgroundColor, borderColor, HorAlignment.LEFT, VerAlignment.MIDDLE, 0.025f, 0.05f, 0.05f, 0.1f);
+		}
+		
+		public static Properties createEdit(Color backgroundColor, Color borderColor, Color textColor) {
+			return createEdit(DEFAULT_EDIT_FONT, backgroundColor, borderColor, textColor);
+		}
+		
+		public static Properties createEdit(Color backgroundColor, Color borderColor) {
+			return createEdit(backgroundColor, borderColor, Color.BLACK);
+		}
+		
+		public static Properties createEdit(Color borderColor) {
+			return createEdit(Color.WHITE, borderColor);
+		}
+		
+		public static Properties createEdit() {
+			return createEdit(Color.BLACK);
 		}
 		
 		public static Properties createText(Font font, Color textColor, Color backgroundColor){
