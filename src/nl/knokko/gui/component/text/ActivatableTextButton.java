@@ -23,7 +23,7 @@ public class ActivatableTextButton extends TextButton {
     @Override
     protected void updateTexture(){
         super.updateTexture();
-        activeTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, activeProperties, IMAGE_WIDTH, IMAGE_HEIGHT));
+        activeTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, activeProperties));
     }
     
     @Override
@@ -36,6 +36,6 @@ public class ActivatableTextButton extends TextButton {
     
     public void setActiveProperties(Properties properties){
         activeProperties = properties;
-        activeTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, activeProperties, IMAGE_WIDTH, IMAGE_HEIGHT));
+        activeTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, activeProperties));
     }
 }

@@ -45,7 +45,7 @@ public class TextButton extends TextComponent {
 	@Override
 	protected void updateTexture(){
 		super.updateTexture();
-		hoverTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, hoverProperties, IMAGE_WIDTH, IMAGE_HEIGHT));
+		hoverTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, hoverProperties));
 	}
 	
 	@Override
@@ -58,7 +58,7 @@ public class TextButton extends TextComponent {
 	
 	public void setHoverProperties(TextBuilder.Properties newProperties){
 		hoverProperties = newProperties;
-		hoverTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, hoverProperties, IMAGE_WIDTH, IMAGE_HEIGHT));
+		hoverTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, hoverProperties));
 	}
 	
 	@Override

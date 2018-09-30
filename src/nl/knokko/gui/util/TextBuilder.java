@@ -36,6 +36,37 @@ public final class TextBuilder {
 		return (int) Math.round(number);
 	}
 	
+	protected static int roundUp(double number) {
+		return (int) Math.round(Math.ceil(number));
+	}
+	
+	protected static int roundDown(double number) {
+		return (int) number;
+	}
+	
+	public static BufferedImage createTexture(String text, Properties p) {
+		BufferedImage dummyImage = new BufferedImage(8, 4, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g = dummyImage.createGraphics();
+		g.setFont(p.font);
+		Rectangle2D bounds = g.getFontMetrics().getStringBounds(text, g);
+		if(bounds.getWidth() == 0 || bounds.getHeight() == 0) {
+			return createTexture(text, p, 256, 128);
+		}//TODO small edge issues
+		double factor = bounds.getWidth() / bounds.getHeight();
+		double effectiveHeight = 128 / (1 + 2 * p.borderY + 2 * p.marginY);
+		double preferredWidth = effectiveHeight * factor * (1 + 2 * p.borderX + 2 * p.marginX);
+		//now make sure the width will be a power of 2...
+		int width = 8;
+		while(width < preferredWidth) {
+			width *= 2;
+		}
+		double upperFactor = width / (1 + 2 * p.borderX + 2 * p.marginX) / effectiveHeight;
+		double lowerFactor = upperFactor / 2;
+		if(upperFactor - factor <= factor - lowerFactor)
+			return createTexture(text, p, width, 128);
+		return createTexture(text, p, width / 2, 128);
+	}
+	
 	public static BufferedImage createTexture(String text, Properties p, int width, int height){
 		int type;
 		if(p.textColor.getAlpha() == 255 && p.backgroundColor.getAlpha() == 255 && p.borderColor.getAlpha() == 255)
@@ -43,26 +74,27 @@ public final class TextBuilder {
 		else
 			type = BufferedImage.TYPE_INT_ARGB;
 		BufferedImage image = new BufferedImage(width, height, type);
-		int minBX = round(p.borderX * width);
-		int minBY = round(p.borderY * height);
-		int maxBX = round((1 - p.borderX) * width);
-		int maxBY = round((1 - p.borderY) * height);
+		int minBX = roundDown(p.borderX * width);
+		int minBY = roundDown(p.borderY * height);
+		//the ' - 1' appears to be necessary for unknown reason
+		int maxBX = roundDown((1 - p.borderX) * width) - 1;
+		int maxBY = roundDown((1 - p.borderY) * height) - 1;
 		float outerX = p.borderX + p.marginX;
 		float outerY = p.borderY + p.marginY;
-		int minTX = round(outerX * width);
-		int minTY = round(outerX * height);
-		int maxTX = round((1 - outerY) * width);
-		int maxTY = round((1 - outerY) * height);
+		int minTX = roundDown(outerX * width);
+		int minTY = roundDown(outerY * height);
+		int maxTX = roundDown((1 - outerX) * width);
+		int maxTY = roundDown((1 - outerY) * height);
 		int textWidth = maxTX - minTX + 1;
 		int textHeight = maxTY - minTY + 1;
 		Graphics2D g = image.createGraphics();
-		g.setColor(p.borderColor);
-		g.fillRect(0, 0, minBX, height);
-		g.fillRect(minBX, 0, maxBX - minBX, minBY);
-		g.fillRect(maxBX, 0, width - maxBX, height);
-		g.fillRect(minBX, maxBY, maxBX - minBX, height - maxBY);
 		g.setColor(p.backgroundColor);
-		g.fillRect(minBX, minBY, maxBX - minBX, maxBY - minBY);
+		g.fillRect(minBX + 1, minBY + 1, maxBX - minBX - 1, maxBY - minBY - 1);
+		g.setColor(p.borderColor);
+		g.fillRect(0, 0, minBX + 1, height);
+		g.fillRect(minBX, 0, maxBX - minBX + 1, minBY + 1);
+		g.fillRect(maxBX, 0, width - maxBX, height);
+		g.fillRect(minBX, maxBY, maxBX - minBX + 1, height - maxBY);
 		g.setColor(p.textColor);
 		g.setFont(p.font);
 		Rectangle2D bounds = p.font.getStringBounds(text, g.getFontRenderContext());
@@ -70,9 +102,9 @@ public final class TextBuilder {
 			double factorX = textWidth / bounds.getWidth();
 			double factorY = textHeight / bounds.getHeight();
 			double factor = Math.min(factorX, factorY);
-			Font realFont = new Font(p.font.getFontName(), p.font.getSize(), (int) (p.font.getSize() * factor));
-			LineMetrics line = realFont.getLineMetrics(text, g.getFontRenderContext());
+			Font realFont = new Font(p.font.getFontName(), p.font.getStyle(), (int) (p.font.getSize() * factor));
 			g.setFont(realFont);
+			LineMetrics line = realFont.getLineMetrics(text, g.getFontRenderContext());
 			Rectangle2D realBounds = realFont.getStringBounds(text, g.getFontRenderContext());
 			int textX;
 			int textY;

@@ -33,10 +33,6 @@ import nl.knokko.gui.util.TextBuilder;
 
 public class TextComponent extends AbstractGuiComponent {
 	
-	
-	public static final int IMAGE_WIDTH = 512;
-	public static final int IMAGE_HEIGHT = 128;
-	
 	public static final Color DEFAULT_TEXT_COLOR = Color.BLACK;
 	public static final Color DEFAULT_BACKGROUND_COLOR = new Color(0, 0, 0, 0);
 	public static final Color DEFAULT_BORDER_COLOR = new Color(0, 0, 0, 0);
@@ -57,7 +53,7 @@ public class TextComponent extends AbstractGuiComponent {
 	}
 	
 	protected void updateTexture(){
-		texture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, properties, IMAGE_WIDTH, IMAGE_HEIGHT));
+		texture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, properties));
 	}
 	
         @Override

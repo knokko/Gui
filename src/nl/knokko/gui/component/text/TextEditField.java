@@ -66,7 +66,7 @@ public class TextEditField extends TextComponent {
 	}
 	
 	protected void updateActiveTexture(){
-		activeTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, activeProperties, IMAGE_WIDTH, IMAGE_HEIGHT));
+		activeTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, activeProperties));
 	}
 	
 	@Override
