@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import nl.knokko.gui.component.AbstractGuiComponent;
+import nl.knokko.gui.keycode.KeyCode;
 import nl.knokko.gui.render.GuiRenderer;
 import nl.knokko.gui.texture.GuiTexture;
 import nl.knokko.gui.util.TextBuilder.Properties;
@@ -115,6 +116,10 @@ public class TextArea extends AbstractGuiComponent {
 		g.dispose();
 		currentTexture = state.getWindow().getTextureLoader().loadTexture(currentImage);
 	}
+	
+	protected boolean isTyping() {
+		return typingX != -1;
+	}
 
 	@Override
 	public void init() {
@@ -128,7 +133,7 @@ public class TextArea extends AbstractGuiComponent {
 	@Override
 	public void render(GuiRenderer renderer) {
 		renderer.renderTexture(currentTexture, 0, 0, 1, 1);
-		if(typingX != -1) {
+		if(isTyping()) {
 			//TODO render the current place to type
 		}
 	}
@@ -151,13 +156,55 @@ public class TextArea extends AbstractGuiComponent {
 
 	@Override
 	public void keyPressed(int keyCode) {
-		// TODO React to backspace and enter
-		
+		if(isTyping()) {
+			String line = currentLines[typingY];
+			if(keyCode == KeyCode.KEY_BACKSPACE && typingX > 0) {
+				currentLines[typingY] = line.substring(0, typingX - 1) + line.substring(typingX, line.length());
+				recreateTexture();
+			}
+			else if(keyCode == KeyCode.KEY_DELETE && typingX < line.length() - 1) {
+				currentLines[typingY] = line.substring(0, typingX) + line.substring(typingX + 1, line.length());
+				recreateTexture();
+			}
+			else if(keyCode == KeyCode.KEY_ENTER) {
+				String[] newLines = new String[currentLines.length + 1];
+				System.arraycopy(currentLines, 0, newLines, 0, typingY + 1);
+				System.arraycopy(currentLines, typingY + 1, newLines, typingY + 2, currentLines.length - typingY - 1);
+				newLines[typingY + 1] = "";
+				currentLines = newLines;
+				typingY++;
+				typingX = 0;
+				recreateTexture();
+			}
+			else if(keyCode == KeyCode.KEY_LEFT && typingX > 0) {
+				typingX--;
+			}
+			else if(keyCode == KeyCode.KEY_RIGHT && typingX < line.length()) {
+				typingX++;
+			}
+			else if(keyCode == KeyCode.KEY_DOWN && typingY < currentLines.length - 1) {
+				typingY++;
+				if(typingX > currentLines[typingY].length()) {
+					typingX = currentLines[typingY].length();
+				}
+			}
+			else if(keyCode == KeyCode.KEY_UP && typingY > 0) {
+				typingY--;
+			}
+		}
 	}
 
 	@Override
 	public void keyPressed(char character) {
-		// TODO Type the character at typingX and typingY
+		if(isTyping()) {
+			if(typingX == currentLines[typingY].length()) {
+				currentLines[typingY] += character;
+			}
+			else {
+				String line = currentLines[typingY];
+				currentLines[typingY] = line.substring(0, typingX) + character + line.substring(typingX);
+			}
+		}
 	}
 
 	@Override
