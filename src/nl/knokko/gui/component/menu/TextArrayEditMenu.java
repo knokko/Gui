@@ -1,4 +1,4 @@
-package nl.knokko.gui.component.text;
+package nl.knokko.gui.component.menu;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -8,8 +8,10 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import nl.knokko.gui.component.GuiComponent;
-import nl.knokko.gui.component.menu.GuiMenu;
 import nl.knokko.gui.component.simple.ImageButton;
+import nl.knokko.gui.component.text.TextButton;
+import nl.knokko.gui.component.text.TextComponent;
+import nl.knokko.gui.component.text.TextEditField;
 import nl.knokko.gui.texture.GuiTexture;
 import nl.knokko.gui.util.TextBuilder.Properties;
 
