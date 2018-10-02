@@ -56,7 +56,7 @@ public final class TextBuilder {
 		double effectiveHeight = 128 / (1 + 2 * p.borderY + 2 * p.marginY);
 		double preferredWidth = effectiveHeight * factor * (1 + 2 * p.borderX + 2 * p.marginX);
 		//now make sure the width will be a power of 2...
-		int width = 8;
+		int width = 64;
 		while(width < preferredWidth) {
 			width *= 2;
 		}

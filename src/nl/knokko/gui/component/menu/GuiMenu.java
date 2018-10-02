@@ -40,6 +40,9 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 	
 	protected List<SubComponent> components;
 	
+	protected List<SubComponent> componentsToAdd;
+	protected List<SubComponent> componentsToRemove;
+	
 	/**
 	 * The screenCenterX determines what X-coordinate will be rendered in the middle of the screen.
 	 */
@@ -56,27 +59,54 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 	protected float maxCenterY;
 	
 	protected boolean directRefresh;
+	protected int isIterating;
+	protected boolean didInit;
 	
 	public GuiMenu(){
 		super();
 		components = new ArrayList<SubComponent>();
+		componentsToAdd = new ArrayList<SubComponent>(1);
+		componentsToRemove = new ArrayList<SubComponent>(1);
+	}
+	
+	protected void afterIterating() {
+		isIterating--;
+		if(isIterating == 0) {
+			if(!componentsToAdd.isEmpty()) {
+				components.addAll(componentsToAdd);
+				componentsToAdd.clear();
+				if(directRefresh)
+					refreshMovement();
+			}
+			if(!componentsToRemove.isEmpty()) {
+				components.removeAll(componentsToRemove);
+				componentsToRemove.clear();
+				if(directRefresh)
+					refreshMovement();
+			}
+		}
 	}
 	
     @Override
 	public void init(){
-		directRefresh = false;
-		addComponents();
-		refreshMovement();
-		directRefresh = true;
+    	if(!didInit) {
+    		directRefresh = false;
+    		addComponents();
+    		refreshMovement();
+    		directRefresh = true;
+    		didInit = true;
+    	}
 	}
 	
 	protected abstract void addComponents();
 
     @Override
 	public void update() {
+    	isIterating++;
 		for(SubComponent component : components)
 			if(component.isActive())
 				component.getComponent().update();
+		afterIterating();
 		if(allowArrowMoving()){
 			WindowInput input = state.getWindow().getInput();
 			if(input.isKeyDown(KeyCode.KEY_LEFT))
@@ -103,25 +133,31 @@ public abstract class GuiMenu extends AbstractGuiComponent {
         GuiColor background = getBackgroundColor();
         if(background != null)
             renderer.clear(background);
+        isIterating++;
 		for(SubComponent component : components)
 			if(component.isActive())
 				component.render(renderer);
+		afterIterating();
 	}
 
     @Override
 	public void click(float x, float y, int button) {
 		x += screenCenterX;
 		y += screenCenterY;
+		isIterating++;
 		for(SubComponent component : components)
 			if(component.isActive())
 				component.click(x, y, button);
+		afterIterating();
 	}
 
     @Override
 	public void clickOut(int button) {
+    	isIterating++;
 		for(SubComponent component : components)
 			if(component.isActive())
 				component.getComponent().clickOut(button);
+		afterIterating();
 	}
 
     @Override
@@ -142,23 +178,29 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 	
     @Override
 	public void keyPressed(int keyCode) {
+    	isIterating++;
 		for(SubComponent component : components)
 			if(component.isActive())
 				component.component.keyPressed(keyCode);
+		afterIterating();
 	}
 	
     @Override
 	public void keyPressed(char character) {
+    	isIterating++;
 		for(SubComponent component : components)
 			if(component.isActive())
 				component.component.keyPressed(character);
+		afterIterating();
 	}
 
     @Override
 	public void keyReleased(int keyCode) {
+    	isIterating++;
 		for(SubComponent component : components)
 			if(component.isActive())
 				component.component.keyReleased(keyCode);
+		afterIterating();
 	}
 	
 	protected void refreshMovement(){
@@ -166,6 +208,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		float minY = 0;
 		float maxX = 1;
 		float maxY = 1;
+		isIterating++;
 		for(SubComponent component : components){
 			if(component.minX < minX)
 				minX = component.minX;
@@ -176,6 +219,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 			if(component.maxY > maxY)
 				maxY = component.maxY;
 		}
+		afterIterating();
 		minCenterX = minX;
 		if(minCenterX > 0)
 			minCenterX = 0;
@@ -203,21 +247,38 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 	}
 	
 	public void addComponent(SubComponent component){
-		components.add(component);
-		if(directRefresh)
-			refreshMovement();
+		if(isIterating != 0)
+			componentsToAdd.add(component);
+		else {
+			components.add(component);
+			if(directRefresh)
+				refreshMovement();
+		}
 	}
 	
 	public void addComponent(GuiComponent component, float minX, float minY, float maxX, float maxY){
-		components.add(new SubComponent(component, minX, minY, maxX, maxY));
-		if(directRefresh)
-			refreshMovement();
+		addComponent(new SubComponent(component, minX, minY, maxX, maxY));
+	}
+	
+	public void removeComponent(SubComponent component) {
+		if(isIterating != 0)
+			componentsToRemove.add(component);
+		else {
+			components.remove(component);
+			if(directRefresh)
+				refreshMovement();
+		}
 	}
 	
 	public SubComponent getComponentAt(float x, float y){
-		for(SubComponent component : components)
-			if(component.isActive() && component.inBounds(x, y))
+		isIterating++;
+		for(SubComponent component : components) {
+			if(component.isActive() && component.inBounds(x, y)) {
+				afterIterating();
 				return component;
+			}
+		}
+		afterIterating();
 		return null;
 	}
 	
@@ -227,7 +288,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 	
 	public class SubComponent {
 		
-		private final GuiComponent component;
+		private GuiComponent component;
 		
 		private float minX;
 		private float minY;
@@ -247,6 +308,12 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		
 		public GuiComponent getComponent(){
 			return component;
+		}
+		
+		public void setComponent(GuiComponent newComponent) {
+			newComponent.setState(new RelativeComponentState.Dynamic(new State()));
+			newComponent.init();
+			component = newComponent;
 		}
 		
 		public void setBounds(float minX, float minY, float maxX, float maxY){
