@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import nl.knokko.gui.component.GuiComponent;
-import nl.knokko.gui.component.simple.SimpleImageComponent;
+import nl.knokko.gui.component.image.SimpleImageComponent;
 import nl.knokko.gui.component.text.ConditionalTextButton;
 import nl.knokko.gui.component.text.TextButton;
 import nl.knokko.gui.util.TextBuilder.Properties;

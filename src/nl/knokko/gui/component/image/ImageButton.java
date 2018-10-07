@@ -1,4 +1,4 @@
-package nl.knokko.gui.component.simple;
+package nl.knokko.gui.component.image;
 
 import nl.knokko.gui.mousecode.MouseCode;
 import nl.knokko.gui.render.GuiRenderer;

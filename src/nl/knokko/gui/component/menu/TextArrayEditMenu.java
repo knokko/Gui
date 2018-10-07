@@ -8,7 +8,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import nl.knokko.gui.component.GuiComponent;
-import nl.knokko.gui.component.simple.ImageButton;
+import nl.knokko.gui.component.image.ImageButton;
 import nl.knokko.gui.component.text.TextButton;
 import nl.knokko.gui.component.text.TextComponent;
 import nl.knokko.gui.component.text.TextEditField;

@@ -1,4 +1,4 @@
-/*
+/* 
  * The MIT License
  *
  * Copyright 2018 20182191.
@@ -21,24 +21,49 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package nl.knokko.gui.component.simple;
+package nl.knokko.gui.component.image;
 
+import nl.knokko.gui.component.AbstractGuiComponent;
 import nl.knokko.gui.render.GuiRenderer;
 import nl.knokko.gui.texture.GuiTexture;
-import nl.knokko.gui.util.Condition;
 
-public class ConditionalImageComponent extends SimpleImageComponent {
-    
-    protected Condition visible;
-    
-    public ConditionalImageComponent(GuiTexture texture, Condition isVisible) {
-        super(texture);
-        visible = isVisible;
-    }
-    
-    @Override
-    public void render(GuiRenderer renderer){
-        if(visible.isTrue())
-            super.render(renderer);
-    }
+public class SimpleImageComponent extends AbstractGuiComponent {
+	
+	private final GuiTexture texture;
+	
+	public SimpleImageComponent(GuiTexture texture){
+		super();
+		this.texture = texture;
+	}
+
+        @Override
+	public void update() {}
+
+        @Override
+	public void render(GuiRenderer renderer) {
+		renderer.renderTexture(texture, 0, 0, 1, 1);
+	}
+
+        @Override
+	public void click(float x, float y, int button) {}
+
+        @Override
+	public void clickOut(int button) {}
+
+        @Override
+	public boolean scroll(float amount) {
+		return false;
+	}
+
+        @Override
+	public void keyPressed(int keyCode) {}
+	
+        @Override
+	public void keyPressed(char character) {}
+
+        @Override
+	public void keyReleased(int keyCode) {}
+
+        @Override
+	public void init() {}
 }
