@@ -15,7 +15,7 @@ public class ActivatableTextButton extends TextButton {
     protected Condition activeCondition;
     
     public ActivatableTextButton(String text, Properties properties, Properties hoverProperties, Properties activeProperties, Runnable clickAction, Condition activeCondition) {
-        super(text, properties, activeProperties, clickAction);
+        super(text, properties, hoverProperties, clickAction);
         this.activeProperties = activeProperties;
         this.activeCondition = activeCondition;
     }
