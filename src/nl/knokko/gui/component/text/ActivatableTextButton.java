@@ -29,7 +29,7 @@ public class ActivatableTextButton extends TextButton {
     @Override
     public void render(GuiRenderer renderer){
         if(activeCondition.isTrue())
-            renderer.renderTexture(texture, 0, 0, 1, 1);
+            renderer.renderTexture(activeTexture, 0, 0, 1, 1);
         else
             super.render(renderer);
     }
