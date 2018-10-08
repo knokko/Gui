@@ -40,6 +40,8 @@ public abstract class GuiWindow {
 	protected GuiComponentState state;
 	protected WindowInput input;
 	
+	protected boolean shouldStopRunning;
+	
 	public GuiWindow(){
 		input = new WindowInput();
 	}
@@ -124,7 +126,7 @@ public abstract class GuiWindow {
 	protected abstract void directRender();
 	
 	/**
-	 * Closes this window and informs the window listener if there is one. It will stop the run method if the run method is active.
+	 * Closes this window and informs the window listener if there is one. Don't use this if the run method is still active!
 	 */
 	public void close() {
 		if(listener != null)
@@ -133,6 +135,13 @@ public abstract class GuiWindow {
 		directClose();
 		if(listener != null)
 			listener.postClose();
+	}
+	
+	/**
+	 * Let the run method stop at the end of the current iteration
+	 */
+	public void stopRunning() {
+		shouldStopRunning = true;
 	}
 	
 	protected abstract void directClose();

@@ -138,7 +138,7 @@ public class AWTGuiWindow extends GuiWindow {
 	public void run(int fps){
 		int frameTime = 1000000000 / fps;
 		try {
-			while(isOpen() && frame.isDisplayable()){
+			while(!shouldStopRunning && frame.isDisplayable()){
 				if(listener == null || !listener.preRunLoop()){
 					long startTime = System.nanoTime();
 					update();
@@ -155,8 +155,7 @@ public class AWTGuiWindow extends GuiWindow {
 		} catch(InterruptedException ex){
 			ex.printStackTrace();
 		}
-		if(isOpen())
-			close();
+		close();
 	}
 	
 	@Override
