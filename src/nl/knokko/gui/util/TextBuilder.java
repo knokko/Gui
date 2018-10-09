@@ -170,7 +170,7 @@ public final class TextBuilder {
 		}
 		
 		public static Properties createButton(Font font, Color backgroundColor, Color borderColor, Color textColor){
-			return new Properties(font, textColor, backgroundColor, borderColor, HorAlignment.MIDDLE, VerAlignment.MIDDLE, 0.1f, 0.1f, 0.1f, 0.1f);
+			return new Properties(font, textColor, backgroundColor, borderColor, HorAlignment.MIDDLE, VerAlignment.MIDDLE, 0.05f, 0.1f, 0.05f, 0.1f);
 		}
 		
 		public static Properties createButton(Color backgroundColor, Color borderColor, Color textColor){
