@@ -32,6 +32,8 @@ public abstract class AbstractGuiComponent implements GuiComponent {
 	public AbstractGuiComponent(){}
 	
 	public void setState(GuiComponentState state) {
+		if(state == null)
+			throw new NullPointerException();
 		this.state = state;
 	}
 	

@@ -37,6 +37,7 @@ public class RelativeComponentState {
 		private final float maxY;
 		
 		public Static(GuiComponentState parent, float minX, float minY, float maxX, float maxY){
+			if(parent == null) throw new NullPointerException();
 			this.parent = parent;
 			this.minX = minX;
 			this.minY = minY;
@@ -99,6 +100,8 @@ public class RelativeComponentState {
 		}
 
 		public GuiWindow getWindow() {
+			if(state.parent() == null)
+				System.out.println(state);
 			return state.parent().getWindow();
 		}
 	}

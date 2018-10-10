@@ -302,6 +302,11 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 			component.init();
 		}
 		
+		@Override
+		public String toString() {
+			return "SubComponent(" + component + ", " + minX + ", " + minY + ", " + maxX + ", " + maxY + ")";
+		}
+		
 		public void render(GuiRenderer renderer){
 			component.render(renderer.getArea(minX - screenCenterX, minY - screenCenterY, maxX - screenCenterX, maxY - screenCenterY));
 		}
@@ -364,6 +369,11 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 			public float maxY() {
 				return maxY - screenCenterY;
 			}
+            
+            @Override
+            public String toString() {
+            	return "SubMenuState(" + parent() + ", " + minX() + ", " + minY() + ", " + maxX() + ", " + maxY() + ")";
+            }
 		}
 	}
 }
