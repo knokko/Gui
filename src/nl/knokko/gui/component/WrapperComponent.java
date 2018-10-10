@@ -23,6 +23,7 @@
  */
 package nl.knokko.gui.component;
 
+import nl.knokko.gui.component.state.GuiComponentState;
 import nl.knokko.gui.render.GuiRenderer;
 
 public class WrapperComponent<C extends GuiComponent> extends AbstractGuiComponent {
@@ -47,6 +48,13 @@ public class WrapperComponent<C extends GuiComponent> extends AbstractGuiCompone
     
     public boolean isActive(){
         return true;
+    }
+    
+    @Override
+    public void setState(GuiComponentState state) {
+    	super.setState(state);
+    	if(component != null)
+    		component.setState(state);
     }
 
     @Override
