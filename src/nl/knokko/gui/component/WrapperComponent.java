@@ -59,7 +59,7 @@ public class WrapperComponent<C extends GuiComponent> extends AbstractGuiCompone
 
     @Override
     public void init() {
-        if(component != null && isActive())
+        if(component != null)
             component.init();
     }
 
