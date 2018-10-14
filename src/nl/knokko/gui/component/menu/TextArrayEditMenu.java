@@ -107,9 +107,9 @@ public class TextArrayEditMenu extends GuiMenu {
 			for(int j = i + 1; j < edits.size(); j++) {
 				edits.get(j - 1).setComponent(edits.get(j).getComponent());
 			}
-			SubComponent rm1 = components.get(components.size() - 3);
-			SubComponent rm2 = components.get(components.size() - 2);
-			SubComponent rm3 = components.get(components.size() - 1);
+			SubComponent rm1 = getComponents().get(getComponents().size() - 3);
+			SubComponent rm2 = getComponents().get(getComponents().size() - 2);
+			SubComponent rm3 = getComponents().get(getComponents().size() - 1);
 			removeComponent(rm1);
 			removeComponent(rm2);
 			removeComponent(rm3);
