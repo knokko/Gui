@@ -62,10 +62,13 @@ public class FileChooserMenu extends GuiMenu {
 	protected void setDirectory(File newDirectory) {
 		directory = newDirectory;
 		parentDirectory = directory.getParentFile();
+		list.setDirectory();
 	}
 	
-	public static final Properties FILE_NAME_PROPERTIES = Properties.createLabel();
-	public static final Properties FILE_NAME_HOVER_PROPERTIES = Properties.createLabel(new Color(50, 50, 50), new Color(150, 150, 255));
+	public static final Properties FILE_NAME_PROPERTIES = Properties.createLabel(Color.BLACK, Color.WHITE, 512, 128);
+	public static final Properties FILE_NAME_HOVER_PROPERTIES = Properties.createLabel(new Color(50, 50, 50), new Color(150, 150, 255), 512, 128);
+	public static final Properties FOLDER_NAME_PROPERTIES = Properties.createLabel(Color.BLACK, Color.WHITE, 512, 128);
+	public static final Properties FOLDER_NAME_HOVER_PROPERTIES = Properties.createLabel(new Color(50, 50, 50), new Color(150, 150, 255), 512, 128);
 	
 	protected class FileList extends GuiMenu {
 
@@ -75,24 +78,28 @@ public class FileChooserMenu extends GuiMenu {
 		}
 		
 		protected void setDirectory() {
-			components.clear();
+			clearComponents();
 			File[] files = directory.listFiles();
-			for(int index = 0; index < files.length; index++) {
-				File file = files[index];
+			int index = 0;
+			for(File file : files) {
 				try {
-					Image icon = ShellFolder.getShellFolder(file).getIcon(true);
-					BufferedImage image = new BufferedImage(icon.getWidth(null), icon.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-					Graphics2D g = image.createGraphics();
-					g.drawImage(icon, 0, 0, null);
-					g.dispose();
-					addComponent(new SimpleImageComponent(state.getWindow().getTextureLoader().loadTexture(image)), 0f, 0.9f - index * 0.1f, 0.1f, 1f - index * 0.1f);
-					if(file.isDirectory()) {
-						addComponent(new TextButton(file.getName(), FILE_NAME_PROPERTIES, FILE_NAME_HOVER_PROPERTIES, () -> {
-							FileChooserMenu.this.setDirectory(file);
-						}), 0.15f, 0.9f - index * 0.1f, 0.7f, 1f - index * 0.1f);
-					}
-					else if(filter.accept(file)) {
-						selectedFile = file;
+					if(file.isDirectory() || filter.accept(file)) {
+						Image icon = ShellFolder.getShellFolder(file).getIcon(true);
+						BufferedImage image = new BufferedImage(icon.getWidth(null), icon.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+						Graphics2D g = image.createGraphics();
+						g.drawImage(icon, 0, 0, null);
+						g.dispose();
+						addComponent(new SimpleImageComponent(state.getWindow().getTextureLoader().loadTexture(image)), 0f, 0.9f - index * 0.1f, 0.1f, 1f - index * 0.1f);
+						if(file.isDirectory()) {
+							addComponent(new TextButton(file.getName(), FILE_NAME_PROPERTIES, FILE_NAME_HOVER_PROPERTIES, () -> {
+								FileChooserMenu.this.setDirectory(file);
+							}), 0.15f, 0.9f - index * 0.1f, 0.7f, 1f - index * 0.1f);
+						} else {
+							addComponent(new TextButton(file.getName(), FOLDER_NAME_PROPERTIES, FOLDER_NAME_HOVER_PROPERTIES, () -> {
+								selectedFile = file;
+							}), 0.15f, 0.9f - index * 0.1f, 0.7f, 1f - index * 0.1f);
+						}
+						index++;
 					}
 				} catch(FileNotFoundException fnfe) {
 					System.out.println("Couldn't 'find'" + file + ": " + fnfe.getMessage());
