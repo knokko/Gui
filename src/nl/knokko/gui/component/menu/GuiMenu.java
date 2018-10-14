@@ -38,10 +38,12 @@ import nl.knokko.gui.window.input.WindowInput;
 
 public abstract class GuiMenu extends AbstractGuiComponent {
 	
-	protected List<SubComponent> components;
+	private List<SubComponent> components;
 	
-	protected List<SubComponent> componentsToAdd;
-	protected List<SubComponent> componentsToRemove;
+	private List<SubComponent> componentsToAdd;
+	private List<SubComponent> componentsToRemove;
+	
+	private boolean shouldClearComponents;
 	
 	/**
 	 * The screenCenterX determines what X-coordinate will be rendered in the middle of the screen.
@@ -72,6 +74,12 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 	protected void afterIterating() {
 		isIterating--;
 		if(isIterating == 0) {
+			if(shouldClearComponents) {
+				components.clear();
+				shouldClearComponents = false;
+				if(directRefresh)
+					refreshMovement();
+			}
 			if(!componentsToAdd.isEmpty()) {
 				components.addAll(componentsToAdd);
 				componentsToAdd.clear();
@@ -265,6 +273,16 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 			componentsToRemove.add(component);
 		else {
 			components.remove(component);
+			if(directRefresh)
+				refreshMovement();
+		}
+	}
+	
+	public void clearComponents() {
+		if(isIterating != 0)
+			shouldClearComponents = true;
+		else {
+			components.clear();
 			if(directRefresh)
 				refreshMovement();
 		}
