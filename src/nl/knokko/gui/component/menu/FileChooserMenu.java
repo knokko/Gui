@@ -93,11 +93,11 @@ public class FileChooserMenu extends GuiMenu {
 						if(file.isDirectory()) {
 							addComponent(new TextButton(file.getName(), FILE_NAME_PROPERTIES, FILE_NAME_HOVER_PROPERTIES, () -> {
 								FileChooserMenu.this.setDirectory(file);
-							}), 0.15f, 0.9f - index * 0.1f, 0.7f, 1f - index * 0.1f);
+							}), 0.15f, 0.9f - index * 0.1f, 1f, 1f - index * 0.1f);
 						} else {
 							addComponent(new TextButton(file.getName(), FOLDER_NAME_PROPERTIES, FOLDER_NAME_HOVER_PROPERTIES, () -> {
 								selectedFile = file;
-							}), 0.15f, 0.9f - index * 0.1f, 0.7f, 1f - index * 0.1f);
+							}), 0.15f, 0.9f - index * 0.1f, 1f, 1f - index * 0.1f);
 						}
 						index++;
 					}
