@@ -45,6 +45,8 @@ public final class TextBuilder {
 	}
 	
 	public static BufferedImage createTexture(String text, Properties p) {
+		if(p.imageWidth != -1)
+			return createTexture(text, p, p.imageWidth, p.imageHeight);
 		BufferedImage dummyImage = new BufferedImage(8, 4, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = dummyImage.createGraphics();
 		g.setFont(p.font);
@@ -133,52 +135,101 @@ public final class TextBuilder {
 		
 		public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 		
-		public static Properties createLabel(Color textColor, Color backgroundColor) {
-			return createText(DEFAULT_BUTTON_FONT, textColor, backgroundColor);
+		public static Properties createLabel(Color textColor, Color backgroundColor, int imageWidth, int imageHeight) {
+			return createText(DEFAULT_BUTTON_FONT, textColor, backgroundColor, imageWidth, imageHeight);
 		}
 		
-		public static Properties createLabel(Color textColor) {
+		public static Properties createLabel(Color textColor, Color backgroundColor) {
+			return createLabel(textColor, backgroundColor, -1, -1);
+		}
+		
+		public static Properties createLabel(Color textColor, int imageWidth, int imageHeight) {
 			return createLabel(textColor, TRANSPARENT);
 		}
 		
+		public static Properties createLabel(Color textColor) {
+			return createLabel(textColor, -1, -1);
+		}
+		
+		public static Properties createLabel(int imageWidth, int imageHeight) {
+			return createLabel(Color.BLACK, imageWidth, imageHeight);
+		}
+		
 		public static Properties createLabel() {
-			return createLabel(Color.BLACK);
+			return createLabel(-1, -1);
+		}
+		
+		public static Properties createEdit(Font font, Color backgroundColor, Color borderColor, Color textColor, int imageWidth, int imageHeight) {
+			return new Properties(font, textColor, backgroundColor, borderColor, HorAlignment.LEFT, 
+					VerAlignment.MIDDLE, 0.025f, 0.05f, 0.05f, 0.1f, imageWidth, imageHeight);
 		}
 		
 		public static Properties createEdit(Font font, Color backgroundColor, Color borderColor, Color textColor) {
-			return new Properties(font, textColor, backgroundColor, borderColor, HorAlignment.LEFT, VerAlignment.MIDDLE, 0.025f, 0.05f, 0.05f, 0.1f);
+			return createEdit(font, backgroundColor, borderColor, textColor, -1, -1);
+		}
+		
+		public static Properties createEdit(Color backgroundColor, Color borderColor, Color textColor, int imageWidth, int imageHeight) {
+			return createEdit(DEFAULT_EDIT_FONT, backgroundColor, borderColor, textColor, imageWidth, imageHeight);
 		}
 		
 		public static Properties createEdit(Color backgroundColor, Color borderColor, Color textColor) {
-			return createEdit(DEFAULT_EDIT_FONT, backgroundColor, borderColor, textColor);
+			return createEdit(backgroundColor, borderColor, textColor, -1, -1);
+		}
+		
+		public static Properties createEdit(Color backgroundColor, Color borderColor, int imageWidth, int imageHeight) {
+			return createEdit(backgroundColor, borderColor, Color.BLACK, imageWidth, imageHeight);
 		}
 		
 		public static Properties createEdit(Color backgroundColor, Color borderColor) {
-			return createEdit(backgroundColor, borderColor, Color.BLACK);
+			return createEdit(backgroundColor, borderColor, -1, -1);
+		}
+		
+		public static Properties createEdit(Color borderColor, int imageWidth, int imageHeight) {
+			return createEdit(Color.WHITE, borderColor, imageWidth, imageHeight);
 		}
 		
 		public static Properties createEdit(Color borderColor) {
-			return createEdit(Color.WHITE, borderColor);
+			return createEdit(borderColor, -1, -1);
+		}
+		
+		public static Properties createEdit(int imageWidth, int imageHeight) {
+			return createEdit(Color.BLACK, imageWidth, imageHeight);
 		}
 		
 		public static Properties createEdit() {
-			return createEdit(Color.BLACK);
+			return createEdit(-1, -1);
 		}
 		
-		public static Properties createText(Font font, Color textColor, Color backgroundColor){
-			return new Properties(font, textColor, backgroundColor, backgroundColor, HorAlignment.LEFT, VerAlignment.MIDDLE, 0, 0, 0, 0);
+		public static Properties createText(Font font, Color textColor, Color backgroundColor, int imageWidth, int imageHeight){
+			return new Properties(font, textColor, backgroundColor, backgroundColor, HorAlignment.LEFT, VerAlignment.MIDDLE, 0, 0, 0, 0, imageWidth, imageHeight);
 		}
 		
-		public static Properties createButton(Font font, Color backgroundColor, Color borderColor, Color textColor){
-			return new Properties(font, textColor, backgroundColor, borderColor, HorAlignment.MIDDLE, VerAlignment.MIDDLE, 0.05f, 0.1f, 0.05f, 0.1f);
+		public static Properties createText(Font font, Color textColor, Color backgroundColor) {
+			return createText(font, textColor, backgroundColor, -1, -1);
 		}
 		
-		public static Properties createButton(Color backgroundColor, Color borderColor, Color textColor){
-			return createButton(DEFAULT_BUTTON_FONT, backgroundColor, borderColor, textColor);
+		public static Properties createButton(Font font, Color backgroundColor, Color borderColor, Color textColor, int imageWidth, int imageHeight){
+			return new Properties(font, textColor, backgroundColor, borderColor, HorAlignment.MIDDLE, VerAlignment.MIDDLE, 0.05f, 0.1f, 0.05f, 0.1f, imageWidth, imageHeight);
 		}
 		
-		public static Properties createButton(Color backgroundColor, Color borderColor){
-			return createButton(backgroundColor, borderColor, Color.BLACK);
+		public static Properties createButton(Font font, Color backgroundColor, Color borderColor, Color textColor) {
+			return createButton(font, backgroundColor, borderColor, textColor, -1, -1);
+		}
+		
+		public static Properties createButton(Color backgroundColor, Color borderColor, Color textColor, int imageWidth, int imageHeight){
+			return createButton(DEFAULT_BUTTON_FONT, backgroundColor, borderColor, textColor, imageWidth, imageHeight);
+		}
+		
+		public static Properties createButton(Color backgroundColor, Color borderColor, Color textColor) {
+			return createButton(backgroundColor, borderColor, textColor, -1, -1);
+		}
+		
+		public static Properties createButton(Color backgroundColor, Color borderColor, int imageWidth, int imageHeight){
+			return createButton(backgroundColor, borderColor, Color.BLACK, imageWidth, imageHeight);
+		}
+		
+		public static Properties createButton(Color backgroundColor, Color borderColor) {
+			return createButton(backgroundColor, borderColor, -1, -1);
 		}
 		
 		public final Font font;
@@ -195,8 +246,11 @@ public final class TextBuilder {
 		public final float marginX;
 		public final float marginY;
 		
+		public final int imageWidth;
+		public final int imageHeight;
+		
 		public Properties(Font font, Color textColor, Color backgroundColor, Color borderColor, HorAlignment horAlignment, 
-				VerAlignment verAlignment, float borderX, float borderY, float marginX, float marginY){
+				VerAlignment verAlignment, float borderX, float borderY, float marginX, float marginY, int width, int height){
 			this.font = font;
 			this.textColor = textColor;
 			this.backgroundColor = backgroundColor;
@@ -209,6 +263,8 @@ public final class TextBuilder {
 			this.borderY = borderY;
 			this.marginX = marginX;
 			this.marginY = marginY;
+			imageWidth = width;
+			imageHeight = height;
 		}
 	}
 	
