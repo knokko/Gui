@@ -60,6 +60,8 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 	protected float maxCenterX;
 	protected float maxCenterY;
 	
+	protected float scrollSpeed;
+	
 	protected boolean directRefresh;
 	protected int isIterating;
 	protected boolean didInit;
@@ -69,6 +71,11 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		components = new ArrayList<SubComponent>();
 		componentsToAdd = new ArrayList<SubComponent>(1);
 		componentsToRemove = new ArrayList<SubComponent>(1);
+		scrollSpeed = 1f;
+	}
+	
+	protected void setScrollSpeed(float factor) {
+		scrollSpeed = factor;
 	}
 	
 	protected void afterIterating() {
@@ -176,7 +183,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		if(!allowScrolling())
 			return false;
 		float prevCenterY = screenCenterY;
-		screenCenterY += 2 * amount;
+		screenCenterY += 2 * amount * scrollSpeed;
 		if(screenCenterY < minCenterY)
 			screenCenterY = minCenterY;
 		if(screenCenterY > maxCenterY)
