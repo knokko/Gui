@@ -285,6 +285,14 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		}
 	}
 	
+	public void removeComponent(GuiComponent component) {
+		for (SubComponent sub : components) {
+			if (sub.getComponent() == component) {
+				removeComponent(sub);
+			}
+		}
+	}
+	
 	public void clearComponents() {
 		if(isIterating != 0)
 			shouldClearComponents = true;
