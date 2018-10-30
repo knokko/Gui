@@ -54,11 +54,15 @@ public class RelativeGuiRenderer {
 		}
 
 		public void renderTexture(GuiTexture texture, float minX, float minY, float maxX, float maxY) {
-			parent.renderTexture(texture, this.minX + minX * deltaX, this.minY + minY * deltaY, this.minX + maxX * deltaX, this.minY + maxY * deltaY);
+			// Don't render stuff that is completely off the screen
+			if (minX <= 1 && minY <= 1 && maxX >= 0 && maxY >= 0)
+				parent.renderTexture(texture, this.minX + minX * deltaX, this.minY + minY * deltaY, this.minX + maxX * deltaX, this.minY + maxY * deltaY);
 		}
 
 		public void fill(GuiColor color, float minX, float minY, float maxX, float maxY) {
-			parent.fill(color, this.minX + minX * deltaX, this.minY + minY * deltaY, this.minX + maxX * deltaX, this.minY + maxY * deltaY);
+			// Don't render stuff that is completely off the screen
+			if (minX <= 1 && minY <= 1 && maxX >= 0 && maxY >= 0)
+				parent.fill(color, this.minX + minX * deltaX, this.minY + minY * deltaY, this.minX + maxX * deltaX, this.minY + maxY * deltaY);
 		}
 
 		public void clear(GuiColor color) {
@@ -79,11 +83,15 @@ public class RelativeGuiRenderer {
 		}
 
 		public void renderTexture(GuiTexture texture, float minX, float minY, float maxX, float maxY) {
-			state.parent().renderTexture(texture, state.minX() + state.deltaX() * minX, state.minY() + state.deltaY() * minY, state.minX() + state.deltaX() * maxX, state.minY() + state.deltaY() * maxY);
+			// Don't render stuff that is completely off the screen
+			if (minX <= 1 && minY <= 1 && maxX >= 0 && maxY >= 0)
+				state.parent().renderTexture(texture, state.minX() + state.deltaX() * minX, state.minY() + state.deltaY() * minY, state.minX() + state.deltaX() * maxX, state.minY() + state.deltaY() * maxY);
 		}
 
 		public void fill(GuiColor color, float minX, float minY, float maxX, float maxY) {
-			state.parent().fill(color, state.minX() + state.deltaX() * minX, state.minY() + state.deltaY() * minY, state.minX() + state.deltaX() * maxX, state.minY() + state.deltaY() * maxY);
+			// Don't render stuff that is completely off the screen
+			if (minX <= 1 && minY <= 1 && maxX >= 0 && maxY >= 0)
+				state.parent().fill(color, state.minX() + state.deltaX() * minX, state.minY() + state.deltaY() * minY, state.minX() + state.deltaX() * maxX, state.minY() + state.deltaY() * maxY);
 		}
 
 		public void clear(GuiColor color) {
