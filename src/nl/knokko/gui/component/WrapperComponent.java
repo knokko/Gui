@@ -23,15 +23,22 @@
  */
 package nl.knokko.gui.component;
 
+import nl.knokko.gui.color.GuiColor;
 import nl.knokko.gui.component.state.GuiComponentState;
 import nl.knokko.gui.render.GuiRenderer;
 
 public class WrapperComponent<C extends GuiComponent> extends AbstractGuiComponent {
     
     protected C component;
+    protected GuiColor background;
     
     public WrapperComponent(C component){
         this.component = component;
+    }
+    
+    public WrapperComponent(C component, GuiColor background) {
+    	this(component);
+    	this.background = background;
     }
     
     public void setComponent(C component){
@@ -71,6 +78,8 @@ public class WrapperComponent<C extends GuiComponent> extends AbstractGuiCompone
 
     @Override
     public void render(GuiRenderer renderer) {
+    	if (background != null)
+    		renderer.clear(background);
         if(component != null && isActive())
             component.render(renderer);
     }
