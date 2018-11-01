@@ -25,6 +25,7 @@ package nl.knokko.gui.window;
 
 import nl.knokko.gui.component.GuiComponent;
 import nl.knokko.gui.component.state.GuiComponentState;
+import nl.knokko.gui.render.GuiRenderer;
 import nl.knokko.gui.texture.loader.GuiTextureLoader;
 import nl.knokko.gui.window.input.WindowInput;
 
@@ -70,8 +71,10 @@ public abstract class GuiWindow {
 	public void open(String title, boolean border){
 		directOpen(title, border);
 		state = createState();
-		mainComponent.setState(state);
-		mainComponent.init();
+		if (mainComponent != null) {
+			mainComponent.setState(state);
+			mainComponent.init();
+		}
 	}
 	
 	protected abstract void directOpen(String title, boolean border);
@@ -157,6 +160,12 @@ public abstract class GuiWindow {
 	 * @return The GuiTextureLoader of this window.
 	 */
 	public abstract GuiTextureLoader getTextureLoader();
+	
+	/**
+	 * This method gives the GuiRenderer that this window will use to render the main component.
+	 * @return The GuiRenderer of this window
+	 */
+	public abstract GuiRenderer getRenderer();
 	
 	/**
 	 * This method returns true if the window has been opened and is not yet closed.

@@ -163,6 +163,11 @@ public class AWTGuiWindow extends GuiWindow {
 		return textureLoader;
 	}
 	
+	@Override
+	public AWTGuiRenderer getRenderer() {
+		return guiRenderer;
+	}
+	
 	private class AWTPanel extends JPanel {
 
 		private static final long serialVersionUID = -1226511423029324679L;
