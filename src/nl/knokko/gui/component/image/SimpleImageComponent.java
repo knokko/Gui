@@ -28,42 +28,53 @@ import nl.knokko.gui.render.GuiRenderer;
 import nl.knokko.gui.texture.GuiTexture;
 
 public class SimpleImageComponent extends AbstractGuiComponent {
+
+	protected GuiTexture texture;
 	
-	private final GuiTexture texture;
-	
-	public SimpleImageComponent(GuiTexture texture){
+	public SimpleImageComponent() {
+		super();
+	}
+
+	public SimpleImageComponent(GuiTexture texture) {
 		super();
 		this.texture = texture;
 	}
 
-        @Override
-	public void update() {}
+	@Override
+	public void update() {
+	}
 
-        @Override
+	@Override
 	public void render(GuiRenderer renderer) {
 		renderer.renderTexture(texture, 0, 0, 1, 1);
 	}
 
-        @Override
-	public void click(float x, float y, int button) {}
+	@Override
+	public void click(float x, float y, int button) {
+	}
 
-        @Override
-	public void clickOut(int button) {}
+	@Override
+	public void clickOut(int button) {
+	}
 
-        @Override
+	@Override
 	public boolean scroll(float amount) {
 		return false;
 	}
 
-        @Override
-	public void keyPressed(int keyCode) {}
-	
-        @Override
-	public void keyPressed(char character) {}
+	@Override
+	public void keyPressed(int keyCode) {
+	}
 
-        @Override
-	public void keyReleased(int keyCode) {}
+	@Override
+	public void keyPressed(char character) {
+	}
 
-        @Override
-	public void init() {}
+	@Override
+	public void keyReleased(int keyCode) {
+	}
+
+	@Override
+	public void init() {
+	}
 }
