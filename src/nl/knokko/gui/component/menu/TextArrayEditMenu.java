@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import nl.knokko.gui.color.GuiColor;
 import nl.knokko.gui.component.GuiComponent;
 import nl.knokko.gui.component.image.ImageButton;
 import nl.knokko.gui.component.text.TextButton;
@@ -45,6 +46,8 @@ public class TextArrayEditMenu extends GuiMenu {
 	protected GuiTexture deleteTexture;
 	protected GuiTexture deleteHoverTexture;
 	
+	protected GuiColor backgroundColor;
+	
 	protected List<SubComponent> edits;
 	
 	protected String[] initialStrings;
@@ -52,7 +55,7 @@ public class TextArrayEditMenu extends GuiMenu {
 	protected GuiComponent previousMenu;
 	protected ReturnAction returnAction;
 
-	public TextArrayEditMenu(GuiComponent previousMenu, ReturnAction returnAction, 
+	public TextArrayEditMenu(GuiComponent previousMenu, ReturnAction returnAction, GuiColor backgroundColor,
 			Properties cancelProperties, Properties cancelHoverProperties,
 			Properties applyProperties, Properties applyHoverProperties,
 			Properties textProperties, Properties textActiveProperties, String... initialStrings) {
@@ -61,12 +64,18 @@ public class TextArrayEditMenu extends GuiMenu {
 		this.previousMenu = previousMenu;
 		this.returnAction = returnAction;
 		
+		this.backgroundColor = backgroundColor;
 		this.cancelProperties = cancelProperties;
 		this.cancelHoverProperties = cancelHoverProperties;
 		this.applyProperties = applyProperties;
 		this.applyHoverProperties = applyHoverProperties;
 		this.textProperties = textProperties;
 		this.textActiveProperties = textActiveProperties;
+	}
+	
+	@Override
+	public GuiColor getBackgroundColor() {
+		return backgroundColor;
 	}
 
 	@Override
