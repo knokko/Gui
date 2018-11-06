@@ -43,7 +43,7 @@ public class WrapperComponent<C extends GuiComponent> extends AbstractGuiCompone
     
     public void setComponent(C component){
         this.component = component;
-        if(component != null){
+        if(component != null && state != null){
             component.setState(state);
             component.init();
         }
