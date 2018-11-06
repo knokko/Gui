@@ -234,7 +234,6 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 			if(component.maxY > maxY)
 				maxY = component.maxY;
 		}
-		afterIterating();
 		minCenterX = minX;
 		if(minCenterX > 0)
 			minCenterX = 0;
@@ -247,6 +246,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		maxCenterY = maxY - 1;
 		if(maxCenterY < 0)
 			maxCenterY = 0;
+		afterIterating();
 	}
 	
 	public GuiColor getBackgroundColor(){
@@ -294,8 +294,9 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 	}
 	
 	public void clearComponents() {
-		if(isIterating != 0)
+		if(isIterating != 0) {
 			shouldClearComponents = true;
+		}
 		else {
 			components.clear();
 			if(directRefresh)

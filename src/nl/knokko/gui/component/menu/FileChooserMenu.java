@@ -105,6 +105,7 @@ public class FileChooserMenu extends GuiMenu {
 					System.out.println("Couldn't 'find'" + file + ": " + fnfe.getMessage());
 				}
 			}
+			this.screenCenterY = 0f;
 		}
 	}
 	
