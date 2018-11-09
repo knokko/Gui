@@ -342,7 +342,12 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		}
 		
 		public void render(GuiRenderer renderer){
-			component.render(renderer.getArea(minX - screenCenterX, minY - screenCenterY, maxX - screenCenterX, maxY - screenCenterY));
+			float minRenderX = minX - screenCenterX;
+			float minRenderY = minY - screenCenterY;
+			float maxRenderX = maxX - screenCenterX;
+			float maxRenderY = maxY - screenCenterY;
+			if (minRenderX <= 1 && minRenderY <= 1 && maxRenderX >= 0 && maxRenderY >= 0)
+				component.render(renderer.getArea(minRenderX, minRenderY, maxRenderX, maxRenderY));
 		}
 		
 		public GuiComponent getComponent(){
