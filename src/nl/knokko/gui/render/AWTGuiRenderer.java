@@ -64,7 +64,9 @@ public class AWTGuiRenderer implements GuiRenderer {
 
 	public void fill(GuiColor color, float minX, float minY, float maxX, float maxY) {
 		g.setColor(new Color(color.getRedF(), color.getGreenF(), color.getBlueF(), color.getAlphaF()));
-		g.fillRect(this.minX + Math.round(deltaX * minX), this.maxY - Math.round(deltaY * maxY), Math.round(deltaX * (maxX - minX)), Math.round(deltaY * (maxY - minY)));
+		int minScreenX = this.minX + (int) (deltaX * minX);
+		int minScreenY = this.maxY - (int) Math.ceil(deltaY * maxY);
+		g.fillRect(minScreenX, minScreenY, (int) Math.ceil(deltaX * maxX) - minScreenX + 1, (int) Math.ceil(deltaY * (1 - minY)) - minScreenY + 1);
 	}
 
 	public void clear(GuiColor color) {
