@@ -27,6 +27,7 @@ import nl.knokko.gui.component.GuiComponent;
 import nl.knokko.gui.component.state.GuiComponentState;
 import nl.knokko.gui.render.GuiRenderer;
 import nl.knokko.gui.texture.loader.GuiTextureLoader;
+import nl.knokko.gui.util.CharBuilder;
 import nl.knokko.gui.window.input.WindowInput;
 
 /**
@@ -166,6 +167,12 @@ public abstract class GuiWindow {
 	 * @return The GuiRenderer of this window
 	 */
 	public abstract GuiRenderer getRenderer();
+	
+	/**
+	 * This method gives the CharBuilder of this window. The CharBuilder can be used to get single character textures.
+	 * @return The CharBuilder of this window
+	 */
+	public abstract CharBuilder getCharBuilder();
 	
 	/**
 	 * This method returns true if the window has been opened and is not yet closed.

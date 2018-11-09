@@ -47,6 +47,7 @@ import nl.knokko.gui.mousecode.AWTMouseConverter;
 import nl.knokko.gui.render.AWTGuiRenderer;
 import nl.knokko.gui.texture.loader.AWTTextureLoader;
 import nl.knokko.gui.texture.loader.GuiTextureLoader;
+import nl.knokko.gui.util.CharBuilder;
 import nl.knokko.gui.window.input.CharacterFilter;
 
 public class AWTGuiWindow extends GuiWindow {
@@ -65,10 +66,12 @@ public class AWTGuiWindow extends GuiWindow {
 	
 	private final AWTTextureLoader textureLoader;
 	private final AWTGuiRenderer guiRenderer;
+	private final CharBuilder charBuilder;
 	
 	public AWTGuiWindow(){
 		textureLoader = new AWTTextureLoader();
 		guiRenderer = new AWTGuiRenderer();
+		charBuilder = new CharBuilder(textureLoader);
 	}
 	
 	public AWTGuiWindow(GuiComponent mainComponent){
@@ -166,6 +169,11 @@ public class AWTGuiWindow extends GuiWindow {
 	@Override
 	public AWTGuiRenderer getRenderer() {
 		return guiRenderer;
+	}
+	
+	@Override
+	public CharBuilder getCharBuilder() {
+		return charBuilder;
 	}
 	
 	private class AWTPanel extends JPanel {
