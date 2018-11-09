@@ -59,4 +59,34 @@ public class ImagePartGuiTexture extends ImageGuiTexture {
 	public int getMaxY(){
 		return maxY;
 	}
+	
+	@Override
+	public float getMinU() {
+		return (float) minX / image.getWidth(null);
+	}
+	
+	@Override
+	public float getMinV() {
+		return 1f - (float) (maxY / image.getWidth(null));
+	}
+	
+	@Override
+	public float getMaxU() {
+		return (float) maxX / image.getWidth(null);
+	}
+	
+	@Override
+	public float getMaxV() {
+		return 1f - (float) (minY / image.getHeight(null));
+	}
+	
+	@Override
+	public int getWidth() {
+		return maxX - minX + 1;
+	}
+	
+	@Override
+	public int getHeight() {
+		return maxY - minY + 1;
+	}
 }

@@ -57,11 +57,7 @@ public final class TextBuilder {
 		double factor = bounds.getWidth() / bounds.getHeight();
 		double effectiveHeight = 128 / (1 + 2 * p.borderY + 2 * p.marginY);
 		double preferredWidth = effectiveHeight * factor * (1 + 2 * p.borderX + 2 * p.marginX);
-		//now make sure the width will be a power of 2...
-		int width = 64;
-		while(width < preferredWidth) {
-			width *= 2;
-		}
+		int width = (int) Math.ceil(preferredWidth);
 		double upperFactor = width / (1 + 2 * p.borderX + 2 * p.marginX) / effectiveHeight;
 		double lowerFactor = upperFactor / 2;
 		if(upperFactor - factor <= factor - lowerFactor)
@@ -130,8 +126,8 @@ public final class TextBuilder {
 	
 	public static class Properties {
 		
-		public static final Font DEFAULT_BUTTON_FONT = new Font("TimesRoman", 0, 30);
-		public static final Font DEFAULT_EDIT_FONT = new Font("Verdana", Font.ITALIC, 30);
+		public static final Font DEFAULT_BUTTON_FONT = new Font("TimesRoman", 0, 60);
+		public static final Font DEFAULT_EDIT_FONT = new Font("Verdana", Font.ITALIC, 60);
 		
 		public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 		

@@ -27,7 +27,7 @@ import java.awt.Image;
 
 public class ImageGuiTexture implements GuiTexture {
 	
-	private final Image image;
+	protected final Image image;
 	
 	public ImageGuiTexture(Image image){
 		this.image = image;
@@ -38,19 +38,19 @@ public class ImageGuiTexture implements GuiTexture {
 	}
 
 	public float getMinU() {
-		throw new UnsupportedOperationException("An ImageGuiTexture is no GLGuiTexture");
+		return 0;
 	}
 
 	public float getMinV() {
-		throw new UnsupportedOperationException("An ImageGuiTexture is no GLGuiTexture");
+		return 0;
 	}
 
 	public float getMaxU() {
-		throw new UnsupportedOperationException("An ImageGuiTexture is no GLGuiTexture");
+		return 1;
 	}
 
 	public float getMaxV() {
-		throw new UnsupportedOperationException("An ImageGuiTexture is no GLGuiTexture");
+		return 1;
 	}
 
 	public Image getImage() {
@@ -71,5 +71,15 @@ public class ImageGuiTexture implements GuiTexture {
 
 	public int getMaxY() {
 		return image.getHeight(null) - 1;
+	}
+
+	@Override
+	public int getWidth() {
+		return image.getWidth(null);
+	}
+
+	@Override
+	public int getHeight() {
+		return image.getHeight(null);
 	}
 }

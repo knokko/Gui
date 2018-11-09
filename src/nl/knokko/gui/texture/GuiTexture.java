@@ -46,4 +46,8 @@ public interface GuiTexture {
 	int getMaxX();
 	
 	int getMaxY();
+	
+	int getWidth();
+	
+	int getHeight();
 }

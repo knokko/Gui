@@ -34,26 +34,23 @@ public class CharBuilder {
 	}
 	
 	private ImageResult createTexture(char character, Color color, Font font) {
-		BufferedImage image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage image = new BufferedImage(font.getSize(), font.getSize() * 5 / 4, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = image.createGraphics();
 		g.setFont(font);
 		Rectangle2D bounds = font.getStringBounds(new char[] {character}, 0, 1, g.getFontRenderContext());
 		LineMetrics lm = font.getLineMetrics(new char[] {character}, 0, 1, g.getFontRenderContext());
-		if (bounds.getWidth() > image.getWidth() || bounds.getHeight() > image.getHeight()) {
-			int width = image.getWidth();
-			while (width < bounds.getWidth())
-				width *= 2;
-			int height = image.getHeight();
-			while (height < bounds.getHeight())
-				height *= 2;
-			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		int height = (int) Math.ceil(lm.getAscent() + lm.getDescent());
+		if (bounds.getWidth() > image.getWidth() || height > image.getHeight()) {
+			if (bounds.getWidth() == 0 || height == 0)
+				return new ImageResult(new BufferedImage(0, 0, BufferedImage.TYPE_INT_ARGB), 1, 1);
+			image = new BufferedImage((int) Math.ceil(bounds.getWidth()), height, BufferedImage.TYPE_INT_RGB);
 			g = image.createGraphics();
 			g.setFont(font);
 		}
 		g.setColor(color);
 		g.drawString(Character.toString(character), 0, lm.getAscent());
 		g.dispose();
-		return new ImageResult(image, (int) Math.ceil(bounds.getWidth()), (int) Math.ceil(lm.getAscent() + lm.getDescent()));
+		return new ImageResult(image, (int) Math.ceil(bounds.getWidth()), height);
 	}
 	
 	private static class ImageResult {
