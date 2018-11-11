@@ -94,6 +94,14 @@ public class TextComponent extends AbstractGuiComponent {
 		updateTexture();
 	}
 	
+	/**
+	 * Set the text without changing the texture.
+	 * @param newText The new text for this component
+	 */
+	public void setDirectText(String newText) {
+		text = newText;
+	}
+	
 	public String getText(){
 		return text;
 	}
