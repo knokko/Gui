@@ -58,8 +58,10 @@ public abstract class GuiWindow {
 	public void open(String title, int width, int height, boolean border){
 		directOpen(title, width, height, border);
 		state = createState();
-		mainComponent.setState(state);
-		mainComponent.init();
+		if (mainComponent != null) {
+			mainComponent.setState(state);
+			mainComponent.init();
+		}
 	}
 	
 	protected abstract void directOpen(String title, int width, int height, boolean border);
