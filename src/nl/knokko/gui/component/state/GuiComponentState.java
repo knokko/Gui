@@ -41,5 +41,9 @@ public interface GuiComponentState {
 	 */
 	float getMouseY();
 	
+	float getMouseDX();
+	
+	float getMouseDY();
+	
 	GuiWindow getWindow();
 }

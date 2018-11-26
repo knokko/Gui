@@ -62,6 +62,16 @@ public class RelativeComponentState {
 		public GuiWindow getWindow() {
 			return parent.getWindow();
 		}
+
+		@Override
+		public float getMouseDX() {
+			return parent.getMouseDX() / (maxX - minX);
+		}
+
+		@Override
+		public float getMouseDY() {
+			return parent.getMouseDY() / (maxY - minY);
+		}
 	}
 	
 	public static class Dynamic implements GuiComponentState {
@@ -103,6 +113,16 @@ public class RelativeComponentState {
 			if(state.parent() == null)
 				System.out.println(state);
 			return state.parent().getWindow();
+		}
+
+		@Override
+		public float getMouseDX() {
+			return state.parent().getMouseDX() / (state.maxX() - state.minX());
+		}
+
+		@Override
+		public float getMouseDY() {
+			return state.parent().getMouseDY() / (state.maxY() - state.minY());
 		}
 	}
 }

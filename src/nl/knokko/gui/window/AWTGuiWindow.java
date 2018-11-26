@@ -26,6 +26,7 @@ package nl.knokko.gui.window;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -68,6 +69,9 @@ public class AWTGuiWindow extends GuiWindow {
 	private final AWTGuiRenderer guiRenderer;
 	private final CharBuilder charBuilder;
 	
+	private int prevMouseX;
+	private int prevMouseY;
+	
 	public AWTGuiWindow(){
 		textureLoader = new AWTTextureLoader();
 		guiRenderer = new AWTGuiRenderer();
@@ -88,7 +92,19 @@ public class AWTGuiWindow extends GuiWindow {
 	}
 	
 	@Override
-	protected void preUpdate(){}
+	protected void preUpdate() {}
+	
+	@Override
+	protected void postUpdate(){
+		Point mouse = frame.getMousePosition();
+		if (mouse != null) {
+			prevMouseX = mouse.x;
+			prevMouseY = mouse.y;
+		} else {
+			prevMouseX = -1;
+			prevMouseY = -1;
+		}
+	}
 	
 	@Override
 	protected void directRender(){
@@ -174,6 +190,42 @@ public class AWTGuiWindow extends GuiWindow {
 	@Override
 	public CharBuilder getCharBuilder() {
 		return charBuilder;
+	}
+	
+	@Override
+	public float getMouseX() {
+		Point mouse = frame.getMousePosition();
+		if(mouse == null)
+			return Float.NaN;
+		Insets insets = frame.getInsets();
+		return (float) (mouse.x - insets.left) / (frame.getWidth() - 1 - insets.right - insets.left);
+	}
+	
+	@Override
+	public float getMouseY() {
+		Point mouse = frame.getMousePosition();
+		if(mouse == null)
+			return Float.NaN;
+		Insets insets = frame.getInsets();
+		return 1 - (float) (mouse.y - insets.top) / (frame.getHeight() - 1 - insets.top - insets.bottom);
+	}
+	
+	@Override
+	public float getMouseDX() {
+		Point mouse = frame.getMousePosition();
+		Insets insets = frame.getInsets();
+		if (mouse != null && prevMouseX != -1)
+			return (float) (mouse.x - prevMouseX) / (frame.getWidth() - insets.right - insets.left);
+		return 0;
+	}
+	
+	@Override
+	public float getMouseDY() {
+		Point mouse = frame.getMousePosition();
+		Insets insets = frame.getInsets();
+		if (mouse != null && prevMouseY != -1)
+			return (float) -(mouse.y - prevMouseY) / (frame.getHeight() - insets.top - insets.bottom);
+		return 0;
 	}
 	
 	private class AWTPanel extends JPanel {

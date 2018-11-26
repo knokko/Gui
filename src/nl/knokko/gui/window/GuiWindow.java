@@ -113,10 +113,13 @@ public abstract class GuiWindow {
 			mainComponent.update();
 			if(listener != null)
 				listener.postUpdate();
+			postUpdate();
 		}
 	}
 	
 	protected abstract void preUpdate();
+	
+	protected abstract void postUpdate();
 	
 	/**
 	 * Renders the main component of this window and calls the render methods of the window listener if there is a window listener
@@ -187,4 +190,44 @@ public abstract class GuiWindow {
 	public WindowInput getInput(){
 		return input;
 	}
+	
+	/**
+	 * This method gives the x-coordinate of the mouse in this window.
+	 * The value will be between 0 and 1. A value of 0 means the mouse is at the left border of this window.
+	 * A value of 1 means the mouse is at the right border of this window. If the mouse is not on the window,
+	 * this method returns NaN.
+	 * @return The x-coordinate of the mouse in this window
+	 */
+	public abstract float getMouseX();
+	
+	/**
+	 * This method gives the y-coordinate of the mouse in this window.
+	 * The value will be between 0 and 1. A value of 0 means the mouse is at the bottom border of this window.
+	 * A value of 1 means the mouse is at the top border of this window. If the mouse is not on the window,
+	 * this methods returns NaN.
+	 * @return The y-coordinate of the mouse in this window
+	 */
+	public abstract float getMouseY();
+	
+	/**
+	 * This method gives the mouse movement in the x-direction since the last call to update().
+	 * The value will be between -1 and 1. A value of -1 indicates that the mouse would have moved from the 
+	 * right border of the window to the left border of the window within the previous tick.
+	 * A value of 0 indicates that the x-coordinate of the mouse didn't change in within the previous tick.
+	 * A value of 1 indicates that the mouse would have moved from the left border to the right border within
+	 * the previous tick.
+	 * @return the mouse movement in the x-direction
+	 */
+	public abstract float getMouseDX();
+	
+	/**
+	 * This method gives the mouse movement in the y-direction since the last call to update().
+	 * The value will be between -1 and 1. A value of -1 indicates that the mouse would have moved from the 
+	 * top border of the window to the bottom border of the window within the previous tick.
+	 * A value of 0 indicates that the y-coordinate of the mouse didn't change in within the previous tick.
+	 * A value of 1 indicates that the mouse would have moved from the bottom border to the top border within
+	 * the previous tick.
+	 * @return the mouse movement in the y-direction
+	 */
+	public abstract float getMouseDY();
 }

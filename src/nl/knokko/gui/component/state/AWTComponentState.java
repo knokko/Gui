@@ -23,9 +23,6 @@
  *******************************************************************************/
 package nl.knokko.gui.component.state;
 
-import java.awt.Insets;
-import java.awt.Point;
-
 import javax.swing.JFrame;
 
 import nl.knokko.gui.window.AWTGuiWindow;
@@ -45,22 +42,24 @@ public class AWTComponentState implements GuiComponentState {
 	}
 
 	public float getMouseX() {
-		Point mouse = frame.getMousePosition();
-		if(mouse == null)
-			return Float.NaN;
-		Insets insets = frame.getInsets();
-		return (float) (mouse.x - insets.left) / (frame.getWidth() - 1 - insets.right - insets.left);
+		return window.getMouseX();
 	}
 
 	public float getMouseY() {
-		Point mouse = frame.getMousePosition();
-		if(mouse == null)
-			return Float.NaN;
-		Insets insets = frame.getInsets();
-		return 1 - (float) (mouse.y - insets.top) / (frame.getHeight() - 1 - insets.top - insets.bottom);
+		return window.getMouseY();
 	}
 
 	public AWTGuiWindow getWindow(){
 		return window;
+	}
+
+	@Override
+	public float getMouseDX() {
+		return window.getMouseDX();
+	}
+
+	@Override
+	public float getMouseDY() {
+		return window.getMouseDY();
 	}
 }
