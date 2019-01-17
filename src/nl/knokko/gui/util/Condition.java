@@ -30,4 +30,12 @@ public interface Condition {
      * @return true if this condition evaluates to true, false otherwise
      */
     boolean isTrue();
+    
+    Condition TRUE = () -> {
+    	return true;
+    };
+    
+    Condition FALSE = () -> {
+    	return false;
+    };
 }
