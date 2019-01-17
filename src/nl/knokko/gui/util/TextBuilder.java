@@ -52,7 +52,7 @@ public final class TextBuilder {
 		g.setFont(p.font);
 		Rectangle2D bounds = g.getFontMetrics().getStringBounds(text, g);
 		if(bounds.getWidth() == 0 || bounds.getHeight() == 0) {
-			return createTexture(text, p, 256, 128);
+			return createTexture(text, p, 32, 16);
 		}//TODO small edge issues
 		double factor = bounds.getWidth() / bounds.getHeight();
 		double effectiveHeight = 128 / (1 + 2 * p.borderY + 2 * p.marginY);
@@ -61,8 +61,8 @@ public final class TextBuilder {
 		double upperFactor = width / (1 + 2 * p.borderX + 2 * p.marginX) / effectiveHeight;
 		double lowerFactor = upperFactor / 2;
 		if(upperFactor - factor <= factor - lowerFactor)
-			return createTexture(text, p, width, 128);
-		return createTexture(text, p, width / 2, 128);
+			return createTexture(text, p, Math.max(width, 128), 128);
+		return createTexture(text, p, Math.max(width / 2, 64), 128);
 	}
 	
 	public static BufferedImage createTexture(String text, Properties p, int width, int height){
