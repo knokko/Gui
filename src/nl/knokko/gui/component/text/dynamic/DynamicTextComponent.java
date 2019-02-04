@@ -40,6 +40,10 @@ public class DynamicTextComponent extends AbstractGuiComponent {
 		this.text = new SingleText(text, props);
 	}
 	
+	public String getText() {
+		return text.text;
+	}
+	
 	public void setText(String newText) {
 		text.setText(newText);
 	}
