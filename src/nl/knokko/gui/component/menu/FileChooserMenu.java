@@ -30,10 +30,14 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import nl.knokko.gui.color.GuiColor;
+import nl.knokko.gui.color.SimpleGuiColor;
 import nl.knokko.gui.component.GuiComponent;
 import nl.knokko.gui.component.image.SimpleImageComponent;
+import nl.knokko.gui.component.simple.SimpleColorComponent;
 import nl.knokko.gui.component.text.ConditionalTextButton;
 import nl.knokko.gui.component.text.TextButton;
+import nl.knokko.gui.component.text.dynamic.DynamicTextButton;
 import nl.knokko.gui.util.TextBuilder.Properties;
 import sun.awt.shell.ShellFolder;
 
@@ -64,29 +68,34 @@ public class FileChooserMenu extends GuiMenu {
 
 	@Override
 	protected void addComponents() {
+		list = new FileList();
+		addComponent(list, 0f, 0.14f, 1f, 0.86f);
+		addComponent(new SimpleColorComponent(SimpleGuiColor.BLUE), 0f, 0f, 1f, 0.14f);
 		addComponent(new TextButton("Cancel", CANCEL_PROPERTIES, CANCEL_HOVER_PROPERTIES, () -> {
 			state.getWindow().setMainComponent(returnMenu);
-		}), 0.2f, 0.05f, 0.35f, 0.15f);
+		}), 0.2f, 0.02f, 0.35f, 0.12f);
 		addComponent(new ConditionalTextButton("Select", SELECT_PROPERTIES, SELECT_HOVER_PROPERTIES, () -> {
 			listener.onChoose(selectedFile);
 			state.getWindow().setMainComponent(returnMenu);
 		}, () -> {
 			return selectedFile != null;
-		}), 0.6f, 0.05f, 0.75f, 0.15f);
+		}), 0.6f, 0.02f, 0.75f, 0.12f);
+		addComponent(new SimpleColorComponent(SimpleGuiColor.BLUE), 0f, 0.86f, 1f, 1f);
 		addComponent(new ConditionalTextButton("Go up", CANCEL_PROPERTIES, CANCEL_HOVER_PROPERTIES, () -> {
 			setDirectory(parentDirectory);
 		}, () -> {
 			return parentDirectory != null;
-		}), 0.25f, 0.85f, 0.35f, 0.95f);
-		list = new FileList();
-		addComponent(list, 0.05f, 0.2f, 0.95f, 0.8f);
+		}), 0.25f, 0.88f, 0.35f, 0.98f);
 	}
 	
 	protected void setDirectory(File newDirectory) {
 		directory = newDirectory;
 		parentDirectory = directory.getParentFile();
 		list.setDirectory();
+		state.getWindow().markChange();
 	}
+	
+	private static final GuiColor LIST_BACKGROUND = new SimpleGuiColor(0, 0, 150);
 	
 	public static final Properties FILE_NAME_PROPERTIES = Properties.createLabel(Color.BLACK, Color.WHITE, 512, 128);
 	public static final Properties FILE_NAME_HOVER_PROPERTIES = Properties.createLabel(new Color(50, 50, 50), new Color(150, 150, 255), 512, 128);
@@ -98,6 +107,11 @@ public class FileChooserMenu extends GuiMenu {
 		@Override
 		protected void addComponents() {
 			setDirectory();
+		}
+		
+		@Override
+		public GuiColor getBackgroundColor() {
+			return LIST_BACKGROUND;
 		}
 		
 		protected void setDirectory() {
@@ -114,13 +128,14 @@ public class FileChooserMenu extends GuiMenu {
 						g.dispose();
 						addComponent(new SimpleImageComponent(state.getWindow().getTextureLoader().loadTexture(image)), 0f, 0.9f - index * 0.1f, 0.1f, 1f - index * 0.1f);
 						if(file.isDirectory()) {
-							addComponent(new TextButton(file.getName(), FILE_NAME_PROPERTIES, FILE_NAME_HOVER_PROPERTIES, () -> {
+							addComponent(new DynamicTextButton(file.getName(), FILE_NAME_PROPERTIES, FILE_NAME_HOVER_PROPERTIES, () -> {
 								FileChooserMenu.this.setDirectory(file);
-							}), 0.15f, 0.9f - index * 0.1f, 1f, 1f - index * 0.1f);
+							}), 0.15f, 0.9f - index * 0.1f, Math.min(1f, 0.15f + file.getName().length() * 0.02f), 1f - index * 0.1f);
 						} else {
-							addComponent(new TextButton(file.getName(), FOLDER_NAME_PROPERTIES, FOLDER_NAME_HOVER_PROPERTIES, () -> {
+							addComponent(new DynamicTextButton(file.getName(), FOLDER_NAME_PROPERTIES, FOLDER_NAME_HOVER_PROPERTIES, () -> {
 								selectedFile = file;
-							}), 0.15f, 0.9f - index * 0.1f, 1f, 1f - index * 0.1f);
+								state.getWindow().markChange();
+							}), 0.15f, 0.9f - index * 0.1f, Math.min(1f, 0.15f + file.getName().length() * 0.02f), 1f - index * 0.1f);
 						}
 						index++;
 					}
