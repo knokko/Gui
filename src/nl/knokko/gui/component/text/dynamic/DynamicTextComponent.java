@@ -89,6 +89,7 @@ public class DynamicTextComponent extends AbstractGuiComponent {
 	protected static class SingleText {
 		
 		private CharBuilder charBuilder;
+		private GuiComponentState state;
 		
 		private String text;
 		private Properties props;
@@ -118,6 +119,7 @@ public class DynamicTextComponent extends AbstractGuiComponent {
 		
 		protected void init(GuiComponentState state) {
 			charBuilder = state.getWindow().getCharBuilder();
+			this.state = state;
 			updateTextures();
 		}
 		
@@ -144,6 +146,9 @@ public class DynamicTextComponent extends AbstractGuiComponent {
 			borderColor = new SimpleGuiColor(props.borderColor.getRGB());
 			minTextY = props.borderY + props.marginY;
 			maxTextY = 1 - minTextY;
+			if (state != null) {
+				state.getWindow().markChange();
+			}
 		}
 		
 		protected void render(GuiRenderer renderer) {

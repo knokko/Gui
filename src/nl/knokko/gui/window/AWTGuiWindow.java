@@ -85,6 +85,7 @@ public class AWTGuiWindow extends GuiWindow {
 	
 	public void setFrame(JFrame frame){
 		this.frame = frame;
+		markChange();
 	}
 	
 	public JFrame getFrame(){
@@ -98,9 +99,15 @@ public class AWTGuiWindow extends GuiWindow {
 	protected void postUpdate(){
 		Point mouse = frame.getMousePosition();
 		if (mouse != null) {
+			if (prevMouseX != mouse.x || prevMouseY != mouse.y) {
+				markChange();
+			}
 			prevMouseX = mouse.x;
 			prevMouseY = mouse.y;
 		} else {
+			if (prevMouseX != -1 || prevMouseY != -1) {
+				markChange();
+			}
 			prevMouseX = -1;
 			prevMouseY = -1;
 		}

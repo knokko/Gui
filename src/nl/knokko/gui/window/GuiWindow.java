@@ -42,10 +42,33 @@ public abstract class GuiWindow {
 	protected GuiComponentState state;
 	protected WindowInput input;
 	
+	protected boolean renderContinuously;
+	protected boolean needsRender;
+	
 	protected boolean shouldStopRunning;
 	
 	public GuiWindow(){
 		input = new WindowInput();
+	}
+	
+	/**
+	 * Settings this to true will cause the application to render every tick, regardless of whether or not
+	 * anything changed. By default this is false for AWT windows to spare power and performance, however, GL
+	 * windows are very glitchy if they don't render every frame, so it is true by default for GL windows. Settings 
+	 * this to true is only useful for applications like games that really have to render every tick or for components
+	 * that want to change their color continuously.
+	 * @param value True to render continuously, false to only render after changes
+	 */
+	public void setRenderContinuously(boolean value) {
+		renderContinuously = value;
+	}
+	
+	/**
+	 * Notifies the window that something changed so that it should render again. Calling this only has
+	 * effect if the window is not in continuous render mode.
+	 */
+	public void markChange() {
+		needsRender = true;
 	}
 	
 	/**
@@ -62,6 +85,7 @@ public abstract class GuiWindow {
 			mainComponent.setState(state);
 			mainComponent.init();
 		}
+		markChange();
 	}
 	
 	protected abstract void directOpen(String title, int width, int height, boolean border);
@@ -78,6 +102,7 @@ public abstract class GuiWindow {
 			mainComponent.setState(state);
 			mainComponent.init();
 		}
+		markChange();
 	}
 	
 	protected abstract void directOpen(String title, boolean border);
@@ -91,6 +116,7 @@ public abstract class GuiWindow {
 		if(isOpen()){
 			mainComponent.setState(state);
 			mainComponent.init();
+			markChange();
 		}
 	}
 	
@@ -125,10 +151,11 @@ public abstract class GuiWindow {
 	 * Renders the main component of this window and calls the render methods of the window listener if there is a window listener
 	 */
 	public void render() {
-		if(listener == null || !listener.preRender()){
+		if ((renderContinuously || needsRender) && (listener == null || !listener.preRender())) {
 			directRender();
 			if(listener != null)
 				listener.postRender();
+			needsRender = false;
 		}
 	}
 	

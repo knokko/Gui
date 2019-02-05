@@ -40,8 +40,10 @@ public class ImageButton extends SimpleImageComponent {
 	
 	@Override
 	public void click(float x, float y, int button) {
-		if(button == MouseCode.BUTTON_LEFT)
+		if(button == MouseCode.BUTTON_LEFT) {
 			clickAction.run();
+			state.getWindow().markChange();
+		}
 	}
 	
 	@Override

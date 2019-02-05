@@ -63,21 +63,26 @@ public class TextEditField extends TextComponent {
 	
 	protected void updatePassiveTexture(){
 		texture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, properties));
+		state.getWindow().markChange();
 	}
 	
 	protected void updateActiveTexture(){
 		activeTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, activeProperties));
+		state.getWindow().markChange();
 	}
 	
 	@Override
 	public void click(float x, float y, int button){
-		if(button == MouseCode.BUTTON_LEFT)
+		if(button == MouseCode.BUTTON_LEFT) {
 			active = !active;
+			state.getWindow().markChange();
+		}
 	}
 	
 	@Override
 	public void clickOut(int button){
 		active = false;
+		state.getWindow().markChange();
 	}
 	
 	@Override
@@ -90,8 +95,10 @@ public class TextEditField extends TextComponent {
 	
 	@Override
 	public void keyPressed(int key){
-		if(key == KeyCode.KEY_ESCAPE || key == KeyCode.KEY_ENTER)
+		if(key == KeyCode.KEY_ESCAPE || key == KeyCode.KEY_ENTER) {
 			active = false;
+			state.getWindow().markChange();
+		}
 		if(active){
 			if(key == KeyCode.KEY_BACKSPACE && text.length() > 0){
 				text = text.substring(0, text.length() - 1);

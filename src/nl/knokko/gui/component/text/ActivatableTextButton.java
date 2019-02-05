@@ -60,5 +60,6 @@ public class ActivatableTextButton extends TextButton {
     public void setActiveProperties(Properties properties){
         activeProperties = properties;
         activeTexture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, activeProperties));
+        state.getWindow().markChange();
     }
 }

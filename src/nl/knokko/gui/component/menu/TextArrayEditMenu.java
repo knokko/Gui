@@ -108,6 +108,7 @@ public class TextArrayEditMenu extends GuiMenu {
 		}), 0.1f, 0.7f, 0.25f, 0.8f);
 		addComponent(new TextButton("Add line", applyProperties, applyHoverProperties, () -> {
 			addLine(edits.size(), "Text...");
+			state.getWindow().markChange();
 		}), 0.1f, 0.5f, 0.25f, 0.6f);
 		addComponent(new TextButton("Apply", applyProperties, applyHoverProperties, () -> {
 			String[] result = new String[edits.size()];

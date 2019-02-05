@@ -55,6 +55,7 @@ public class CheckboxComponent extends AbstractGuiComponent {
 	@Override
 	public void click(float x, float y, int button) {
 		checked = !checked;
+		state.getWindow().markChange();
 	}
 	
 	@Override
@@ -78,14 +79,17 @@ public class CheckboxComponent extends AbstractGuiComponent {
 	
 	public void check() {
 		checked = true;
+		state.getWindow().markChange();
 	}
 	
 	public void uncheck() {
 		checked = false;
+		state.getWindow().markChange();
 	}
 	
 	public void check(boolean value) {
 		checked = value;
+		state.getWindow().markChange();
 	}
 
 	@Override

@@ -109,9 +109,10 @@ public class GuiToolbar extends AbstractGuiComponent {
 		if(button == MouseCode.BUTTON_LEFT){
 			int index = getMouseIndex();
 			if(index != -1){
-				if(index == 0)
+				if(index == 0) {
 					active = !active;
-				else if(active)
+					state.getWindow().markChange();
+				} else if(active)
 					options[index - 1].action.run();
 			}
 		}
@@ -119,6 +120,7 @@ public class GuiToolbar extends AbstractGuiComponent {
 
 	public void clickOut(int button) {
 		active = false;
+		state.getWindow().markChange();
 	}
 
 	public boolean scroll(float amount) {

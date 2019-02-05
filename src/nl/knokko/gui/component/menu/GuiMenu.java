@@ -86,18 +86,21 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 				shouldClearComponents = false;
 				if(directRefresh)
 					refreshMovement();
+				state.getWindow().markChange();
 			}
 			if(!componentsToAdd.isEmpty()) {
 				components.addAll(componentsToAdd);
 				componentsToAdd.clear();
 				if(directRefresh)
 					refreshMovement();
+				state.getWindow().markChange();
 			}
 			if(!componentsToRemove.isEmpty()) {
 				components.removeAll(componentsToRemove);
 				componentsToRemove.clear();
 				if(directRefresh)
 					refreshMovement();
+				state.getWindow().markChange();
 			}
 		}
 	}
@@ -124,14 +127,22 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		afterIterating();
 		if(allowArrowMoving()){
 			WindowInput input = state.getWindow().getInput();
-			if(input.isKeyDown(KeyCode.KEY_LEFT))
+			if(input.isKeyDown(KeyCode.KEY_LEFT)) {
 				screenCenterX -= 0.005f;
-			if(input.isKeyDown(KeyCode.KEY_RIGHT))
+				state.getWindow().markChange();
+			}
+			if(input.isKeyDown(KeyCode.KEY_RIGHT)) {
 				screenCenterX += 0.005f;
-			if(input.isKeyDown(KeyCode.KEY_UP))
+				state.getWindow().markChange();
+			}
+			if(input.isKeyDown(KeyCode.KEY_UP)) {
 				screenCenterY += 0.005f;
-			if(input.isKeyDown(KeyCode.KEY_DOWN))
+				state.getWindow().markChange();
+			}
+			if(input.isKeyDown(KeyCode.KEY_DOWN)) {
 				screenCenterY -= 0.005f;
+				state.getWindow().markChange();
+			}
 			if(screenCenterX < minCenterX)
 				screenCenterX = minCenterX;
 			if(screenCenterX > maxCenterX)
@@ -188,7 +199,12 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 			screenCenterY = minCenterY;
 		if(screenCenterY > maxCenterY)
 			screenCenterY = maxCenterY;
-		return screenCenterY != prevCenterY;
+		if (screenCenterY != prevCenterY) {
+			state.getWindow().markChange();
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
     @Override
@@ -246,6 +262,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 		maxCenterY = maxY - 1;
 		if(maxCenterY < 0)
 			maxCenterY = 0;
+		state.getWindow().markChange();
 		afterIterating();
 	}
 	
@@ -268,6 +285,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 			components.add(component);
 			if(directRefresh)
 				refreshMovement();
+			state.getWindow().markChange();
 		}
 	}
 	
@@ -282,6 +300,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 			components.remove(component);
 			if(directRefresh)
 				refreshMovement();
+			state.getWindow().markChange();
 		}
 	}
 	
@@ -301,6 +320,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 			components.clear();
 			if(directRefresh)
 				refreshMovement();
+			state.getWindow().markChange();
 		}
 	}
 	
@@ -358,6 +378,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 			newComponent.setState(new RelativeComponentState.Dynamic(new State()));
 			newComponent.init();
 			component = newComponent;
+			state.getWindow().markChange();
 		}
 		
 		public void setBounds(float minX, float minY, float maxX, float maxY){
@@ -365,6 +386,7 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 			this.minY = minY;
 			this.maxX = maxX;
 			this.maxY = maxY;
+			state.getWindow().markChange();
 		}
 		
 		public void click(float x, float y, int button){
