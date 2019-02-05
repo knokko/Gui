@@ -32,85 +32,93 @@ import nl.knokko.gui.texture.GuiTexture;
 import nl.knokko.gui.util.TextBuilder;
 
 public class TextComponent extends AbstractGuiComponent {
-	
+
 	public static final Color DEFAULT_TEXT_COLOR = Color.BLACK;
 	public static final Color DEFAULT_BACKGROUND_COLOR = new Color(0, 0, 0, 0);
 	public static final Color DEFAULT_BORDER_COLOR = new Color(0, 0, 0, 0);
 	public static final Font DEFAULT_FONT = new Font("TimesRoman", 0, 20);
-	
-	protected static int round(double number){
+
+	protected static int round(double number) {
 		return (int) Math.round(number);
 	}
-	
+
 	protected GuiTexture texture;
-	
+
 	protected String text;
 	protected TextBuilder.Properties properties;
-	
-	public TextComponent(String text, TextBuilder.Properties properties){
+
+	public TextComponent(String text, TextBuilder.Properties properties) {
 		this.text = text;
 		this.properties = properties;
 	}
-	
-	protected void updateTexture(){
+
+	protected void updateTexture() {
 		texture = state.getWindow().getTextureLoader().loadTexture(TextBuilder.createTexture(text, properties));
+		state.getWindow().markChange();
 	}
-	
-        @Override
+
+	@Override
 	public void init() {
 		updateTexture();
 	}
 
-        @Override
-	public void update() {}
+	@Override
+	public void update() {
+	}
 
-        @Override
+	@Override
 	public void render(GuiRenderer renderer) {
 		renderer.renderTexture(texture, 0, 0, 1, 1);
 	}
 
-        @Override
-	public void click(float x, float y, int button) {}
+	@Override
+	public void click(float x, float y, int button) {
+	}
 
-        @Override
-	public void clickOut(int button) {}
+	@Override
+	public void clickOut(int button) {
+	}
 
-        @Override
+	@Override
 	public boolean scroll(float amount) {
 		return false;
 	}
 
-        @Override
-	public void keyPressed(int keyCode) {}
-	
-        @Override
-	public void keyPressed(char character) {}
+	@Override
+	public void keyPressed(int keyCode) {
+	}
 
-        @Override
-	public void keyReleased(int keyCode) {}
-	
-	public void setText(String newText){
+	@Override
+	public void keyPressed(char character) {
+	}
+
+	@Override
+	public void keyReleased(int keyCode) {
+	}
+
+	public void setText(String newText) {
 		text = newText;
 		updateTexture();
 	}
-	
+
 	/**
 	 * Set the text without changing the texture.
+	 * 
 	 * @param newText The new text for this component
 	 */
 	public void setDirectText(String newText) {
 		text = newText;
 	}
-	
-	public String getText(){
+
+	public String getText() {
 		return text;
 	}
-	
-	public TextBuilder.Properties getProperties(){
+
+	public TextBuilder.Properties getProperties() {
 		return properties;
 	}
-	
-	public void setProperties(TextBuilder.Properties newProperties){
+
+	public void setProperties(TextBuilder.Properties newProperties) {
 		properties = newProperties;
 		updateTexture();
 	}
