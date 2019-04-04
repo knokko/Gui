@@ -257,4 +257,28 @@ public abstract class GuiWindow {
 	 * @return the mouse movement in the y-direction
 	 */
 	public abstract float getMouseDY();
+	
+	/**
+	 * Determines the x-coordinate of the left border of this window. If this window is not yet open,
+	 * this method will return -1.
+	 * @return the x-coordinate of the left border of this window or -1 if the window isn't open
+	 */
+	public abstract int getWindowPosX();
+	
+	/**
+	 * @return The width of the window in pixels or -1 if the window isn't open
+	 */
+	public abstract int getWidth();
+	
+	/**
+	 * Determines the y-coordinate of the upper border of this window. If this window is not yet open,
+	 * this method will return -1.
+	 * @return the y-coordinate of the upper border of this window or -1 if the window isn't open
+	 */
+	public abstract int getWindowPosY();
+	
+	/**
+	 * @return The height of the window in pixels or -1 if the window isn't open
+	 */
+	public abstract int getHeight();
 }

@@ -329,4 +329,40 @@ public class AWTGuiWindow extends GuiWindow {
 			}
 		}
 	}
+
+	@Override
+	public int getWindowPosX() {
+		if (isOpen()) {
+			return frame.getX();
+		} else {
+			return -1;
+		}
+	}
+
+	@Override
+	public int getWidth() {
+		if (isOpen()) {
+			return frame.getWidth();
+		} else {
+			return -1;
+		}
+	}
+
+	@Override
+	public int getWindowPosY() {
+		if (isOpen()) {
+			return frame.getY();
+		} else {
+			return -1;
+		}
+	}
+
+	@Override
+	public int getHeight() {
+		if (isOpen()) {
+			return frame.getHeight();
+		} else {
+			return -1;
+		}
+	}
 }
