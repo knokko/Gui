@@ -120,6 +120,10 @@ public abstract class GuiWindow {
 		}
 	}
 	
+	public GuiComponent getMainComponent() {
+		return mainComponent;
+	}
+	
 	protected abstract GuiComponentState createState();
 	
 	/**
@@ -266,7 +270,20 @@ public abstract class GuiWindow {
 	public abstract int getWindowPosX();
 	
 	/**
+	 * Determines the x-coordinate of the left-most point where this window will render its components. If
+	 * this window is not yet open, this method will return -1.
+	 * @return the x-coordinate of the left most point where this window will render its components
+	 */
+	public abstract int getPosX();
+	
+	/**
 	 * @return The width of the window in pixels or -1 if the window isn't open
+	 */
+	public abstract int getWindowWidth();
+	
+	/**
+	 * @return The width of the space in pixels where this window will render its components or -1 if the
+	 * window isn't open
 	 */
 	public abstract int getWidth();
 	
@@ -277,8 +294,23 @@ public abstract class GuiWindow {
 	 */
 	public abstract int getWindowPosY();
 	
+	
+	/**
+	 * Determines the y-coordinate of the highest point on the screen where this window will render its
+	 * components. If this window isn't open, this method will return -1.
+	 * @return the y-coorindate of the highest point this window will render its components or -1 if this
+	 * window isn't open
+	 */
+	public abstract int getPosY();
+	
 	/**
 	 * @return The height of the window in pixels or -1 if the window isn't open
+	 */
+	public abstract int getWindowHeight();
+	
+	/**
+	 * @return The height of the space in pixels where this window will render its components or -1 if this
+	 * window isn't open
 	 */
 	public abstract int getHeight();
 }

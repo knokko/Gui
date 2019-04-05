@@ -329,11 +329,29 @@ public class AWTGuiWindow extends GuiWindow {
 			}
 		}
 	}
-
+	
 	@Override
 	public int getWindowPosX() {
 		if (isOpen()) {
-			return frame.getX();
+			return frame.getX() + frame.getInsets().left;
+		} else {
+			return -1;
+		}
+	}
+
+	@Override
+	public int getPosX() {
+		if (isOpen()) {
+			return frame.getX() + frame.getInsets().left;
+		} else {
+			return -1;
+		}
+	}
+	
+	@Override
+	public int getWindowWidth() {
+		if (isOpen()) {
+			return frame.getWidth();
 		} else {
 			return -1;
 		}
@@ -342,12 +360,13 @@ public class AWTGuiWindow extends GuiWindow {
 	@Override
 	public int getWidth() {
 		if (isOpen()) {
-			return frame.getWidth();
+			Insets insets = frame.getInsets();
+			return frame.getWidth() - insets.left - insets.right;
 		} else {
 			return -1;
 		}
 	}
-
+	
 	@Override
 	public int getWindowPosY() {
 		if (isOpen()) {
@@ -358,9 +377,28 @@ public class AWTGuiWindow extends GuiWindow {
 	}
 
 	@Override
-	public int getHeight() {
+	public int getPosY() {
+		if (isOpen()) {
+			return frame.getY() + frame.getInsets().top;
+		} else {
+			return -1;
+		}
+	}
+	
+	@Override
+	public int getWindowHeight() {
 		if (isOpen()) {
 			return frame.getHeight();
+		} else {
+			return -1;
+		}
+	}
+
+	@Override
+	public int getHeight() {
+		if (isOpen()) {
+			Insets insets = frame.getInsets();
+			return frame.getHeight() - insets.top - insets.bottom;
 		} else {
 			return -1;
 		}
