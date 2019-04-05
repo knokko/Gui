@@ -23,7 +23,10 @@
  *******************************************************************************/
 package nl.knokko.gui.component.menu;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import nl.knokko.gui.color.GuiColor;
@@ -34,9 +37,10 @@ import nl.knokko.gui.component.state.GuiComponentState;
 import nl.knokko.gui.component.state.RelativeComponentState;
 import nl.knokko.gui.keycode.KeyCode;
 import nl.knokko.gui.render.GuiRenderer;
+import nl.knokko.gui.testing.TextShowingComponent;
 import nl.knokko.gui.window.input.WindowInput;
 
-public abstract class GuiMenu extends AbstractGuiComponent {
+public abstract class GuiMenu extends AbstractGuiComponent implements TextShowingComponent {
 	
 	private List<SubComponent> components;
 	
@@ -232,6 +236,43 @@ public abstract class GuiMenu extends AbstractGuiComponent {
 			if(component.isActive())
 				component.component.keyReleased(keyCode);
 		afterIterating();
+	}
+    
+    @Override
+    public Point2D.Float getLocationForText(String text){
+    	for (SubComponent sub : components) {
+    		if (sub.getComponent() instanceof TextShowingComponent) {
+    			Point2D.Float maybe = ((TextShowingComponent) sub.getComponent()).getLocationForText(text);
+    			if (maybe != null) {
+    				return maybe;
+    			}
+    		}
+    	}
+    	return null;
+    }
+    
+    @Override
+    public TextShowingComponent getShowingComponent(String text) {
+    	for (SubComponent sub : components) {
+    		if (sub.getComponent() instanceof TextShowingComponent) {
+    			TextShowingComponent maybe = ((TextShowingComponent) sub.getComponent()).getShowingComponent(text);
+    			if (maybe != null) {
+    				return maybe;
+    			}
+    		}
+    	}
+    	return null;
+    }
+    
+    @Override
+	public Collection<TextShowingComponent> getShowingComponents(String text) {
+		Collection<TextShowingComponent> collection = new LinkedList<TextShowingComponent>();
+		for (SubComponent sub : components) {
+			if (sub.getComponent() instanceof TextShowingComponent) {
+				collection.addAll(((TextShowingComponent) sub.getComponent()).getShowingComponents(text));
+			}
+		}
+		return collection;
 	}
 	
 	protected void refreshMovement(){

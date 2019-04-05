@@ -23,16 +23,23 @@
  *******************************************************************************/
 package nl.knokko.gui.component.text.dynamic;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Float;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 import nl.knokko.gui.color.GuiColor;
 import nl.knokko.gui.color.SimpleGuiColor;
 import nl.knokko.gui.component.AbstractGuiComponent;
 import nl.knokko.gui.component.state.GuiComponentState;
 import nl.knokko.gui.render.GuiRenderer;
+import nl.knokko.gui.testing.TextShowingComponent;
 import nl.knokko.gui.texture.GuiTexture;
 import nl.knokko.gui.util.CharBuilder;
 import nl.knokko.gui.util.TextBuilder.Properties;
 
-public class DynamicTextComponent extends AbstractGuiComponent {
+public class DynamicTextComponent extends AbstractGuiComponent implements TextShowingComponent {
 	
 	protected SingleText text;
 
@@ -162,5 +169,25 @@ public class DynamicTextComponent extends AbstractGuiComponent {
 					renderer.renderTexture(textures[index], xCoords[index], minTextY, xCoords[index + 1], maxTextY);
 			}
 		}
+	}
+
+	@Override
+	public Float getLocationForText(String text) {
+		return text.equals(this.text.text) ? new Point2D.Float(state.getMidX(), state.getMidY()) : null;
+	}
+
+	@Override
+	public TextShowingComponent getShowingComponent(String text) {
+		return text.equals(this.text.text) ? this : null;
+	}
+
+	@Override
+	public Collection<TextShowingComponent> getShowingComponents(String text) {
+		if (text.equals(this.text.text)) {
+			Collection<TextShowingComponent> result = new ArrayList<TextShowingComponent>(1);
+			result.add(this);
+			return result;
+		}
+		return Collections.emptyList();
 	}
 }

@@ -25,13 +25,18 @@ package nl.knokko.gui.component.text;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.geom.Point2D.Float;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import nl.knokko.gui.component.AbstractGuiComponent;
 import nl.knokko.gui.render.GuiRenderer;
+import nl.knokko.gui.testing.TextShowingComponent;
 import nl.knokko.gui.texture.GuiTexture;
 import nl.knokko.gui.util.TextBuilder;
 
-public class TextComponent extends AbstractGuiComponent {
+public class TextComponent extends AbstractGuiComponent implements TextShowingComponent {
 
 	public static final Color DEFAULT_TEXT_COLOR = Color.BLACK;
 	public static final Color DEFAULT_BACKGROUND_COLOR = new Color(0, 0, 0, 0);
@@ -121,5 +126,25 @@ public class TextComponent extends AbstractGuiComponent {
 	public void setProperties(TextBuilder.Properties newProperties) {
 		properties = newProperties;
 		updateTexture();
+	}
+
+	@Override
+	public Float getLocationForText(String text) {
+		return text.equals(this.text) ? new Float(state.getMidX(), state.getMidY()) : null;
+	}
+
+	@Override
+	public TextShowingComponent getShowingComponent(String text) {
+		return text.equals(this.text) ? this : null;
+	}
+
+	@Override
+	public Collection<TextShowingComponent> getShowingComponents(String text) {
+		if (text.equals(this.text)) {
+			Collection<TextShowingComponent> result = new ArrayList<TextShowingComponent>(1);
+			result.add(this);
+			return result;
+		}
+		return Collections.emptyList();
 	}
 }
