@@ -126,7 +126,12 @@ public abstract class GuiTestHelper {
 	public TextShowingComponent getComponentWithText(String text) {
 		GuiComponent main = window.getMainComponent();
 		if (main instanceof TextShowingComponent) {
-			return ((TextShowingComponent)main).getShowingComponent(text).getComponent();
+			TextShowingComponent.Pair foundPair = ((TextShowingComponent)main).getShowingComponent(text);
+			if (foundPair != null) {
+				return foundPair.getComponent();
+			} else {
+				return null;
+			}
 		} else {
 			return null;
 		}
@@ -145,6 +150,12 @@ public abstract class GuiTestHelper {
 	public void assertComponentWithText(String text) {
 		if (getComponentWithText(text) == null) {
 			throw new TestException("There is no component showing the text " + text);
+		}
+	}
+	
+	public void assertComponentsWithTexts(String...texts) {
+		for (String text : texts) {
+			assertComponentWithText(text);
 		}
 	}
 	
@@ -223,4 +234,20 @@ public abstract class GuiTestHelper {
 	}
 	
 	protected abstract void typeNow(char character);
+	
+	public void pressAndRelease(int keycode, int amount) {
+		for (int counter = 0; counter < amount; counter++) {
+			pressAndRelease(keycode);
+		}
+	}
+	
+	public void pressAndRelease(int keycode) {
+		if (stopped) {
+			throw new TestException("Test has been forced to stop");
+		}
+		pressAndReleaseNow(keycode);
+		delay();
+	}
+	
+	protected abstract void pressAndReleaseNow(int keycode);
 }

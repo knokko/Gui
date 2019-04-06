@@ -19,7 +19,7 @@ public class RobotTestHelper extends GuiTestHelper {
 			robot = new Robot();
 
 			// The GuiTestHelper already keeps track of the right delay
-			robot.setAutoDelay(0);
+			robot.setAutoDelay(1);
 		} catch (AWTException e) {
 			throw new TestException("Couldn't create Robot instance: " + e.getMessage());
 		}
@@ -211,5 +211,12 @@ public class RobotTestHelper extends GuiTestHelper {
 		if (useShift) {
 			robot.keyRelease(KeyEvent.VK_SHIFT);
 		}
+	}
+
+	@Override
+	protected void pressAndReleaseNow(int keycode) {
+		robot.keyPress(keycode);
+		delay();
+		robot.keyRelease(keycode);
 	}
 }
