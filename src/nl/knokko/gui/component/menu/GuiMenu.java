@@ -23,7 +23,6 @@
  *******************************************************************************/
 package nl.knokko.gui.component.menu;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -239,10 +238,10 @@ public abstract class GuiMenu extends AbstractGuiComponent implements TextShowin
 	}
     
     @Override
-    public Point2D.Float getLocationForText(String text){
+    public TextShowingComponent.Pair getShowingComponent(String text) {
     	for (SubComponent sub : components) {
     		if (sub.getComponent() instanceof TextShowingComponent) {
-    			Point2D.Float maybe = ((TextShowingComponent) sub.getComponent()).getLocationForText(text);
+    			TextShowingComponent.Pair maybe = ((TextShowingComponent) sub.getComponent()).getShowingComponent(text);
     			if (maybe != null) {
     				return maybe;
     			}
@@ -252,21 +251,8 @@ public abstract class GuiMenu extends AbstractGuiComponent implements TextShowin
     }
     
     @Override
-    public TextShowingComponent getShowingComponent(String text) {
-    	for (SubComponent sub : components) {
-    		if (sub.getComponent() instanceof TextShowingComponent) {
-    			TextShowingComponent maybe = ((TextShowingComponent) sub.getComponent()).getShowingComponent(text);
-    			if (maybe != null) {
-    				return maybe;
-    			}
-    		}
-    	}
-    	return null;
-    }
-    
-    @Override
-	public Collection<TextShowingComponent> getShowingComponents(String text) {
-		Collection<TextShowingComponent> collection = new LinkedList<TextShowingComponent>();
+	public Collection<TextShowingComponent.Pair> getShowingComponents(String text) {
+		Collection<TextShowingComponent.Pair> collection = new LinkedList<TextShowingComponent.Pair>();
 		for (SubComponent sub : components) {
 			if (sub.getComponent() instanceof TextShowingComponent) {
 				collection.addAll(((TextShowingComponent) sub.getComponent()).getShowingComponents(text));

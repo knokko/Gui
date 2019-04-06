@@ -202,7 +202,6 @@ public class RobotTestHelper extends GuiTestHelper {
 		default:
 			code = KeyEvent.getExtendedKeyCodeForChar(character);
 		}
-		System.out.println("code is " + code + " and char is " + character);
 		if (useShift) {
 			robot.keyPress(VK_SHIFT);
 		}

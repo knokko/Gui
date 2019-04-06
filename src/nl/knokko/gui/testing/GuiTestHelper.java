@@ -1,6 +1,7 @@
 package nl.knokko.gui.testing;
 
 import java.awt.geom.Point2D;
+import java.util.Collection;
 
 import nl.knokko.gui.component.GuiComponent;
 import nl.knokko.gui.window.GuiWindow;
@@ -125,7 +126,7 @@ public abstract class GuiTestHelper {
 	public TextShowingComponent getComponentWithText(String text) {
 		GuiComponent main = window.getMainComponent();
 		if (main instanceof TextShowingComponent) {
-			return ((TextShowingComponent)main).getShowingComponent(text);
+			return ((TextShowingComponent)main).getShowingComponent(text).getComponent();
 		} else {
 			return null;
 		}
@@ -157,7 +158,7 @@ public abstract class GuiTestHelper {
 	public void click(String text, int button) {
 		GuiComponent main = window.getMainComponent();
 		if (main instanceof TextShowingComponent) {
-			Point2D.Float point = ((TextShowingComponent) main).getLocationForText(text);
+			Point2D.Float point = ((TextShowingComponent) main).getShowingComponent(text).getPosition();
 			if (point != null) {
 				click(point.x, point.y, button);
 			} else {
@@ -169,13 +170,26 @@ public abstract class GuiTestHelper {
 	}
 	
 	public void clickNearest(String text, GuiComponent from, int button) {
-		
-		// TODO finish this method
 		GuiComponent main = window.getMainComponent();
 		if (main instanceof TextShowingComponent) {
-			Point2D.Float point = ((TextShowingComponent) main).getLocationForText(text);
-			if (point != null) {
-				click(point.x, point.y, button);
+			Collection<TextShowingComponent.Pair> all = ((TextShowingComponent) main).getShowingComponents(text);
+			Point2D.Float middleFrom = new Point2D.Float(from.getState().getMidX(), from.getState().getMidY());
+			Point2D.Float nearest = null;
+			double nearestDistance = 0;
+			for (TextShowingComponent.Pair pair : all) {
+				if (nearest == null) {
+					nearest = pair.getPosition();
+					nearestDistance = nearest.distance(middleFrom);
+				} else {
+					double distance = pair.getPosition().distance(middleFrom);
+					if (distance < nearestDistance) {
+						nearestDistance = distance;
+						nearest = pair.getPosition();
+					}
+				}
+			}
+			if (nearest != null) {
+				click(nearest.x, nearest.y, button);
 			} else {
 				throw new TestException("No component with text " + text + " can be found");
 			}

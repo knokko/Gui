@@ -24,7 +24,6 @@
 package nl.knokko.gui.component.text.dynamic;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Float;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -172,20 +171,15 @@ public class DynamicTextComponent extends AbstractGuiComponent implements TextSh
 	}
 
 	@Override
-	public Float getLocationForText(String text) {
-		return text.equals(this.text.text) ? new Point2D.Float(state.getMidX(), state.getMidY()) : null;
+	public TextShowingComponent.Pair getShowingComponent(String text) {
+		return text.equals(this.text.text) ? new TextShowingComponent.Pair(this, new Point2D.Float(state.getMidX(), state.getMidY())) : null;
 	}
 
 	@Override
-	public TextShowingComponent getShowingComponent(String text) {
-		return text.equals(this.text.text) ? this : null;
-	}
-
-	@Override
-	public Collection<TextShowingComponent> getShowingComponents(String text) {
+	public Collection<TextShowingComponent.Pair> getShowingComponents(String text) {
 		if (text.equals(this.text.text)) {
-			Collection<TextShowingComponent> result = new ArrayList<TextShowingComponent>(1);
-			result.add(this);
+			Collection<TextShowingComponent.Pair> result = new ArrayList<TextShowingComponent.Pair>(1);
+			result.add(new TextShowingComponent.Pair(this, new Point2D.Float(state.getMidX(), state.getMidY())));
 			return result;
 		}
 		return Collections.emptyList();

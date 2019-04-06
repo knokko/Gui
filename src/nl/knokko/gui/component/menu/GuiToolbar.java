@@ -24,10 +24,8 @@
 package nl.knokko.gui.component.menu;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Float;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import nl.knokko.gui.component.AbstractGuiComponent;
 import nl.knokko.gui.mousecode.MouseCode;
@@ -169,12 +167,12 @@ public class GuiToolbar extends AbstractGuiComponent implements TextShowingCompo
 	}
 
 	@Override
-	public Float getLocationForText(String text) {
+	public TextShowingComponent.Pair getShowingComponent(String text) {
 		int index = 0;
 		for (Option option : options) {
 			if (option.getName().equals(text)) {
 				float relY = (getY(index) + getY(index + 1)) * 0.5f;
-				return new Point2D.Float(state.getMidX(), state.getMinY() + relY * state.getHeight());
+				return new TextShowingComponent.Pair(this, new Point2D.Float(state.getMidX(), state.getMinY() + relY * state.getHeight()));
 			}
 			index++;
 		}
@@ -182,24 +180,16 @@ public class GuiToolbar extends AbstractGuiComponent implements TextShowingCompo
 	}
 
 	@Override
-	public TextShowingComponent getShowingComponent(String text) {
+	public Collection<TextShowingComponent.Pair> getShowingComponents(String text) {
+		Collection<TextShowingComponent.Pair> result = new ArrayList<TextShowingComponent.Pair>(1);
+		int index = 0;
 		for (Option option : options) {
 			if (option.getName().equals(text)) {
-				return this;
+				float relY = (getY(index) + getY(index + 1)) * 0.5f;
+				result.add(new TextShowingComponent.Pair(this, new Point2D.Float(state.getMidX(), state.getMinY() + relY * state.getHeight())));
 			}
+			index++;
 		}
-		return null;
-	}
-
-	@Override
-	public Collection<TextShowingComponent> getShowingComponents(String text) {
-		for (Option option : options) {
-			if (option.getName().equals(text)) {
-				Collection<TextShowingComponent> result = new ArrayList<TextShowingComponent>(1);
-				result.add(this);
-				return result;
-			}
-		}
-		return Collections.emptyList();
+		return result;
 	}
 }
