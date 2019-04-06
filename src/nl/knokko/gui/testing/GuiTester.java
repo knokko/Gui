@@ -30,7 +30,10 @@ public class GuiTester {
 		testHelper = helper;
 		try {
 			helper.delay(500);
+			long startTime = System.currentTimeMillis();
 			test.test(helper);
+			long endTime = System.currentTimeMillis();
+			System.out.println("The test took " + (endTime - startTime) / 1000 + " seconds.");
 		} catch (RuntimeException ex) {
 			if (ex instanceof TestException) {
 				throw ex;
