@@ -1,5 +1,13 @@
 package nl.knokko.gui.testing;
 
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.imageio.ImageIO;
+
 import nl.knokko.gui.window.GuiWindow;
 
 public class GuiTester {
@@ -35,6 +43,14 @@ public class GuiTester {
 			long endTime = System.currentTimeMillis();
 			System.out.println("The test took " + (endTime - startTime) / 1000 + " seconds.");
 		} catch (RuntimeException ex) {
+			testHelper = null;
+			try {
+				BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+				ImageIO.write(image, "png", new File("before_test_failed.png"));
+			} catch (Exception screenEx) {
+				System.out.println("Failed to make screenshot:");
+				screenEx.printStackTrace();
+			}
 			if (ex instanceof TestException) {
 				throw ex;
 			} else {
