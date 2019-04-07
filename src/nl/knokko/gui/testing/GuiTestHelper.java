@@ -169,8 +169,9 @@ public abstract class GuiTestHelper {
 	public void click(String text, int button) {
 		GuiComponent main = window.getMainComponent();
 		if (main instanceof TextShowingComponent) {
-			Point2D.Float point = ((TextShowingComponent) main).getShowingComponent(text).getPosition();
-			if (point != null) {
+			TextShowingComponent.Pair pair = ((TextShowingComponent) main).getShowingComponent(text);
+			if (pair != null) {
+				Point2D.Float point = pair.getPosition();
 				click(point.x, point.y, button);
 			} else {
 				throw new TestException("No component with text " + text + " can be found");
