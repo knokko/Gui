@@ -27,12 +27,13 @@ public class RobotTestHelper extends GuiTestHelper {
 
 	@Override
 	protected void moveMouseNow(int destX, int destY) {
+		int absoluteX = destX + window.getPosX();
+		int absoluteY = destY + window.getPosY();
 
 		// We do this multiple times because of a bug in the JDK. The more calls to
-		// mouseMove, the more
-		// accurate it will be...
+		// mouseMove, the more accurate it will be...
 		for (int counter = 0; counter < 5; counter++) {
-			robot.mouseMove(destX, destY);
+			robot.mouseMove(absoluteX, absoluteY);
 		}
 	}
 
