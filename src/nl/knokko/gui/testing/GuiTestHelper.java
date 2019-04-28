@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -19,12 +20,13 @@ public abstract class GuiTestHelper {
 	protected Thread testThread;
 
 	protected int delayTime;
+	protected int typeDelayTime;
 
 	protected boolean stopped;
 
 	public GuiTestHelper(GuiWindow window, int delayTime) {
 		this.window = window;
-		this.delayTime = delayTime;
+		this.setDelayTime(delayTime);
 	}
 
 	public GuiTestHelper(GuiWindow window) {
@@ -46,6 +48,7 @@ public abstract class GuiTestHelper {
 	 */
 	public void setDelayTime(int millis) {
 		delayTime = millis;
+		typeDelayTime = millis / 3;
 	}
 
 	/**
@@ -196,6 +199,15 @@ public abstract class GuiTestHelper {
 	}
 
 	/**
+	 * Similar to delay(), but waits for the typeDelayTime instead of the normal
+	 * delayTime. The typeDelayTime is 3 times as short as the normal delay time
+	 * because typing should go faster than clicking.
+	 */
+	public void typeDelay() {
+		delay(typeDelayTime);
+	}
+
+	/**
 	 * Waits for the specified amount of milliseconds. This method will block until
 	 * the time has expired. Since the window should run on another thread, it
 	 * should get time to do whatever it is doing. This method will automatically be
@@ -247,19 +259,27 @@ public abstract class GuiTestHelper {
 
 	protected TextShowingComponent.Pair getPairWithText(String text) {
 		for (int counter = 0; counter < 256; counter++) {
-			GuiComponent main = window.getMainComponent();
-			if (main instanceof TextShowingComponent) {
-				TextShowingComponent.Pair pair = ((TextShowingComponent) main).getShowingComponent(text);
-				if (pair == null) {
-					delay(delayTime / 4);
-					System.out.println("Delay a while");
+			try {
+				GuiComponent main = window.getMainComponent();
+				if (main instanceof TextShowingComponent) {
+					TextShowingComponent.Pair pair = ((TextShowingComponent) main).getShowingComponent(text);
+					if (pair == null) {
+						delay(delayTime);
+						System.out.println("Delay a while in getPairWithText");
+						continue;
+					}
+					return pair;
+				} else {
+					delay(delayTime);
+					System.out.println("Delay a while in getPairWithText");
 					continue;
 				}
-				return pair;
-			} else {
-				delay(delayTime / 4);
-				System.out.println("Delay a while");
-				continue;
+			} catch (ConcurrentModificationException concurrency) {
+				// Usually, ignoring this is really bad.
+				// But in this case, it means that the application is currently adding its
+				// components
+				System.out.println("Delay a while in catch getPairWithText");
+				delay(delayTime);
 			}
 		}
 		System.out.println("getPairWithText timed out");
@@ -354,39 +374,49 @@ public abstract class GuiTestHelper {
 	public void clickNearest(String text, GuiComponent from, int button, int amount) {
 		int previousAmount = -1;
 		for (int counter = 0; counter < 256; counter++) {
-			GuiComponent main = window.getMainComponent();
-			if (main instanceof TextShowingComponent) {
-				Collection<TextShowingComponent.Pair> all = ((TextShowingComponent) main).getShowingComponents(text);
-				if (all.size() != amount) {
-					delay(delayTime / 4);
-					previousAmount = amount;
-					continue;
-				}
-				Point2D.Float middleFrom = new Point2D.Float(from.getState().getMidX(), from.getState().getMidY());
-				Point2D.Float nearest = null;
-				double nearestDistance = 0;
-				for (TextShowingComponent.Pair pair : all) {
-					if (nearest == null) {
-						nearest = pair.getPosition();
-						nearestDistance = nearest.distance(middleFrom);
-					} else {
-						double distance = pair.getPosition().distance(middleFrom);
-						if (distance < nearestDistance) {
-							nearestDistance = distance;
+			try {
+				GuiComponent main = window.getMainComponent();
+				if (main instanceof TextShowingComponent) {
+					Collection<TextShowingComponent.Pair> all = ((TextShowingComponent) main)
+							.getShowingComponents(text);
+					if (all.size() != amount) {
+						System.out.println("Delay a while in clickNearest");
+						delay(delayTime);
+						previousAmount = amount;
+						continue;
+					}
+					Point2D.Float middleFrom = new Point2D.Float(from.getState().getMidX(), from.getState().getMidY());
+					Point2D.Float nearest = null;
+					double nearestDistance = 0;
+					for (TextShowingComponent.Pair pair : all) {
+						if (nearest == null) {
 							nearest = pair.getPosition();
+							nearestDistance = nearest.distance(middleFrom);
+						} else {
+							double distance = pair.getPosition().distance(middleFrom);
+							if (distance < nearestDistance) {
+								nearestDistance = distance;
+								nearest = pair.getPosition();
+							}
 						}
 					}
-				}
-				if (nearest != null) {
-					click(nearest.x, nearest.y, button);
-					return;
+					if (nearest != null) {
+						click(nearest.x, nearest.y, button);
+						return;
+					} else {
+						throw new TestException("No component with text " + text + " can be found");
+					}
 				} else {
-					throw new TestException("No component with text " + text + " can be found");
+					System.out.println("Delay a while in clickNearest");
+					delay(delayTime);
+					previousAmount = 0;
+					continue;
 				}
-			} else {
-				delay(delayTime / 4);
-				previousAmount = 0;
-				continue;
+			} catch (ConcurrentModificationException concurrency) {
+				// The application has added components while we were iterating over them
+				// So just wait for the application to finish
+				System.out.println("Delay a while in catch clickNearest");
+				delay(delayTime);
 			}
 		}
 		throw new TestException("There should have been " + amount + " components with text " + text + ", but only "
@@ -420,7 +450,7 @@ public abstract class GuiTestHelper {
 			throw new TestException("Test has been forced to stop");
 		}
 		typeNow(character);
-		delay();
+		typeDelay();
 	}
 
 	/**
@@ -477,7 +507,7 @@ public abstract class GuiTestHelper {
 			throw new TestException("Test has been forced to stop");
 		}
 		pressAndReleaseNow(keycode);
-		delay();
+		typeDelay();
 	}
 
 	/**
@@ -595,51 +625,70 @@ public abstract class GuiTestHelper {
 	 */
 	public void assertImageShown(BufferedImage image) {
 		for (int counter = 0; counter < 256; counter++) {
-			GuiComponent main = window.getMainComponent();
-			if (main instanceof ImageShowingComponent) {
-				Collection<BufferedImage> images = ((ImageShowingComponent) main).getShownImages();
-				for (BufferedImage bi : images) {
-					if (compareImages(image, bi)) {
-						return;
+			try {
+				GuiComponent main = window.getMainComponent();
+				if (main instanceof ImageShowingComponent) {
+					Collection<BufferedImage> images = ((ImageShowingComponent) main).getShownImages();
+					for (BufferedImage bi : images) {
+						if (compareImages(image, bi)) {
+							return;
+						}
 					}
 				}
+				System.out.println("delay a while in assertImageShown");
+				delay(delayTime);
+			} catch (ConcurrentModificationException concurrency) {
+				// The application has been adding components while we were iterating
+				// Give it some extra time
+				System.out.println("delay a while in catch assertImageShown");
+				delay(delayTime);
 			}
-			System.out.println("delay a while");
-			delay(delayTime / 4);
 		}
 		throw new TestException("The image is not shown");
 	}
-	
-	private Collection<ImageShowingComponent.Pair> getAllImages(int amount){
+
+	private Collection<ImageShowingComponent.Pair> getAllImages(int amount) {
 		int lastAmount = 0;
 		for (int counter = 0; counter < 256; counter++) {
-			GuiComponent main = window.getMainComponent();
-			Collection<ImageShowingComponent.Pair> images = null;
-			if (main instanceof ImageShowingComponent) {
-				images = ((ImageShowingComponent) main).getShowingComponents();
-				lastAmount = images.size();
-			}
-			if (images == null || images.size() != amount) {
-				System.out.println("Delay a while");
-				delay(delayTime / 4);
-			} else {
-				return images;
+			try {
+				GuiComponent main = window.getMainComponent();
+				Collection<ImageShowingComponent.Pair> images = null;
+				if (main instanceof ImageShowingComponent) {
+					images = ((ImageShowingComponent) main).getShowingComponents();
+					lastAmount = images.size();
+				}
+				if (images == null || images.size() != amount) {
+					System.out.println("Delay a while in getAllImages");
+					delay(delayTime);
+				} else {
+					return images;
+				}
+			} catch (ConcurrentModificationException concurrency) {
+				// Wait for the application to add its components
+				System.out.println("Delay a while in catch getAllImages");
+				delay(delayTime);
 			}
 		}
-		Collection<ImageShowingComponent.Pair> images = ((ImageShowingComponent) window.getMainComponent()).getShowingComponents();
+		Collection<ImageShowingComponent.Pair> images = ((ImageShowingComponent) window.getMainComponent())
+				.getShowingComponents();
 		for (ImageShowingComponent.Pair pair : images) {
 			System.out.println(pair.getPosition());
 		}
-		throw new TestException("There should be " + amount + " visible images, but only " + lastAmount + " were found");
+		throw new TestException(
+				"There should be " + amount + " visible images, but only " + lastAmount + " were found");
 	}
 
 	/**
-	 * Gets the ImageShowingComponent with its location that is located the closest to (the parameter) from.
-	 * The amount parameter must equal the total amount of images that are currently shown in the application.
-	 * If the found number of image showing components does not equal this amount, this method will retry for
-	 * a while until the amount of found image showing components equals the given amount. If they are still
-	 * not equal at the end, a TestException will be thrown.
-	 * @param from The location from where the nearest image (showing component) should be found
+	 * Gets the ImageShowingComponent with its location that is located the closest
+	 * to (the parameter) from. The amount parameter must equal the total amount of
+	 * images that are currently shown in the application. If the found number of
+	 * image showing components does not equal this amount, this method will retry
+	 * for a while until the amount of found image showing components equals the
+	 * given amount. If they are still not equal at the end, a TestException will be
+	 * thrown.
+	 * 
+	 * @param from   The location from where the nearest image (showing component)
+	 *               should be found
 	 * @param amount The total number of images shown by the application
 	 * @return The nearest image showing component with its location
 	 */
@@ -648,10 +697,10 @@ public abstract class GuiTestHelper {
 			throw new IllegalArgumentException("Amount must be positive, but is " + amount);
 		}
 		Collection<ImageShowingComponent.Pair> images = getAllImages(amount);
-		
+
 		ImageShowingComponent.Pair closest = null;
 		double closestDistanceSQ = Float.POSITIVE_INFINITY;
-		
+
 		for (ImageShowingComponent.Pair pair : images) {
 			double distanceSQ = pair.getPosition().distanceSq(from);
 			if (distanceSQ < closestDistanceSQ) {
@@ -659,48 +708,58 @@ public abstract class GuiTestHelper {
 				closest = pair;
 			}
 		}
-		
+
 		return closest;
 	}
-	
+
 	/**
-	 * Gets the ImageShowingComponent with its location that is located the closest to (the parameter) from.
-	 * The amount parameter must equal the total amount of images that are currently shown in the application.
-	 * If the found number of image showing components does not equal this amount, this method will retry for
-	 * a while until the amount of found image showing components equals the given amount. If they are still
-	 * not equal at the end, a TestException will be thrown.
-	 * @param from The component from where the nearest image (showing component) should be found
+	 * Gets the ImageShowingComponent with its location that is located the closest
+	 * to (the parameter) from. The amount parameter must equal the total amount of
+	 * images that are currently shown in the application. If the found number of
+	 * image showing components does not equal this amount, this method will retry
+	 * for a while until the amount of found image showing components equals the
+	 * given amount. If they are still not equal at the end, a TestException will be
+	 * thrown.
+	 * 
+	 * @param from   The component from where the nearest image (showing component)
+	 *               should be found
 	 * @param amount The total number of images shown by the application
 	 * @return The nearest image showing component with its location
 	 */
-	public ImageShowingComponent.Pair getNearestImage(GuiComponent from, int amount){
+	public ImageShowingComponent.Pair getNearestImage(GuiComponent from, int amount) {
 		return getNearestImage(new Point2D.Float(from.getState().getMidX(), from.getState().getMidY()), amount);
 	}
-	
+
 	/**
-	 * Gets the ImageShowingComponent with its location that is located the closest to the text component
-	 * displaying (the parameter) from.
-	 * The amount parameter must equal the total amount of images that are currently shown in the application.
-	 * If the found number of image showing components does not equal this amount, this method will retry for
-	 * a while until the amount of found image showing components equals the given amount. If they are still
-	 * not equal at the end, a TestException will be thrown.
-	 * @param from The text of the component from where the nearest image (showing component) should be found
+	 * Gets the ImageShowingComponent with its location that is located the closest
+	 * to the text component displaying (the parameter) from. The amount parameter
+	 * must equal the total amount of images that are currently shown in the
+	 * application. If the found number of image showing components does not equal
+	 * this amount, this method will retry for a while until the amount of found
+	 * image showing components equals the given amount. If they are still not equal
+	 * at the end, a TestException will be thrown.
+	 * 
+	 * @param from   The text of the component from where the nearest image (showing
+	 *               component) should be found
 	 * @param amount The total number of images shown by the application
 	 * @return The nearest image showing component with its location
 	 */
-	public ImageShowingComponent.Pair getNearestImage(String from, int amount){
+	public ImageShowingComponent.Pair getNearestImage(String from, int amount) {
 		return getNearestImage(getComponentWithText(from), amount);
 	}
-	
+
 	/**
-	 * Find the ImageShowingComponent that is closest to (the parameter) from and checks if it displays the
-	 * given image. If it doesn't, a TestException will be thrown.
-	 * The amount parameter must equal the total amount of images that are currently shown in the application.
-	 * If the found number of image showing components does not equal this amount, this method will retry for
-	 * a while until the amount of found image showing components equals the given amount. If they are still
-	 * not equal at the end, a TestException will be thrown.
-	 * @param from The point to find the nearest image from
-	 * @param image The image that should be shown by the nearest image showing component to from
+	 * Find the ImageShowingComponent that is closest to (the parameter) from and
+	 * checks if it displays the given image. If it doesn't, a TestException will be
+	 * thrown. The amount parameter must equal the total amount of images that are
+	 * currently shown in the application. If the found number of image showing
+	 * components does not equal this amount, this method will retry for a while
+	 * until the amount of found image showing components equals the given amount.
+	 * If they are still not equal at the end, a TestException will be thrown.
+	 * 
+	 * @param from   The point to find the nearest image from
+	 * @param image  The image that should be shown by the nearest image showing
+	 *               component to from
 	 * @param amount The total number of images shown by the application
 	 */
 	public void assertNearestImage(Point2D.Float from, BufferedImage image, int amount) {
@@ -712,31 +771,38 @@ public abstract class GuiTestHelper {
 		}
 		throw new TestException("The nearest image showing component to from doesn't show the given image");
 	}
-	
+
 	/**
-	 * Find the ImageShowingComponent that is closest to (the parameter) from and checks if it displays the
-	 * given image. If it doesn't, a TestException will be thrown.
-	 * The amount parameter must equal the total amount of images that are currently shown in the application.
-	 * If the found number of image showing components does not equal this amount, this method will retry for
-	 * a while until the amount of found image showing components equals the given amount. If they are still
-	 * not equal at the end, a TestException will be thrown.
-	 * @param from The component to find the nearest image from
-	 * @param image The image that should be shown by the nearest image showing component to from
+	 * Find the ImageShowingComponent that is closest to (the parameter) from and
+	 * checks if it displays the given image. If it doesn't, a TestException will be
+	 * thrown. The amount parameter must equal the total amount of images that are
+	 * currently shown in the application. If the found number of image showing
+	 * components does not equal this amount, this method will retry for a while
+	 * until the amount of found image showing components equals the given amount.
+	 * If they are still not equal at the end, a TestException will be thrown.
+	 * 
+	 * @param from   The component to find the nearest image from
+	 * @param image  The image that should be shown by the nearest image showing
+	 *               component to from
 	 * @param amount The total number of images shown by the application
 	 */
 	public void assertNearestImage(GuiComponent from, BufferedImage image, int amount) {
 		assertNearestImage(new Point2D.Float(from.getState().getMidX(), from.getState().getMidY()), image, amount);
 	}
-	
+
 	/**
-	 * Find the ImageShowingComponent that is closest to the text component showing (the parameter) from and 
-	 * checks if it displays the given image. If it doesn't, a TestException will be thrown.
-	 * The amount parameter must equal the total amount of images that are currently shown in the application.
-	 * If the found number of image showing components does not equal this amount, this method will retry for
-	 * a while until the amount of found image showing components equals the given amount. If they are still
-	 * not equal at the end, a TestException will be thrown.
-	 * @param from The text of the component to find the nearest image from
-	 * @param image The image that should be shown by the nearest image showing component to from
+	 * Find the ImageShowingComponent that is closest to the text component showing
+	 * (the parameter) from and checks if it displays the given image. If it
+	 * doesn't, a TestException will be thrown. The amount parameter must equal the
+	 * total amount of images that are currently shown in the application. If the
+	 * found number of image showing components does not equal this amount, this
+	 * method will retry for a while until the amount of found image showing
+	 * components equals the given amount. If they are still not equal at the end, a
+	 * TestException will be thrown.
+	 * 
+	 * @param from   The text of the component to find the nearest image from
+	 * @param image  The image that should be shown by the nearest image showing
+	 *               component to from
 	 * @param amount The total number of images shown by the application
 	 */
 	public void assertNearestImage(String from, BufferedImage image, int amount) {

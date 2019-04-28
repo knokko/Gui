@@ -207,7 +207,7 @@ public class RobotTestHelper extends GuiTestHelper {
 			robot.keyPress(VK_SHIFT);
 		}
 		robot.keyPress(code);
-		delay();
+		typeDelay();
 		robot.keyRelease(code);
 		if (useShift) {
 			robot.keyRelease(KeyEvent.VK_SHIFT);
@@ -217,7 +217,7 @@ public class RobotTestHelper extends GuiTestHelper {
 	@Override
 	protected void pressAndReleaseNow(int keycode) {
 		robot.keyPress(keycode);
-		delay();
+		typeDelay();
 		robot.keyRelease(keycode);
 	}
 }
