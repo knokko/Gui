@@ -23,11 +23,17 @@
  *******************************************************************************/
 package nl.knokko.gui.component;
 
+import java.awt.image.BufferedImage;
+import java.util.Collection;
+import java.util.Collections;
+
 import nl.knokko.gui.color.GuiColor;
 import nl.knokko.gui.component.state.GuiComponentState;
 import nl.knokko.gui.render.GuiRenderer;
+import nl.knokko.gui.testing.ImageShowingComponent;
+import nl.knokko.gui.testing.TextShowingComponent;
 
-public class WrapperComponent<C extends GuiComponent> extends AbstractGuiComponent {
+public class WrapperComponent<C extends GuiComponent> extends AbstractGuiComponent implements TextShowingComponent, ImageShowingComponent {
     
     protected C component;
     protected GuiColor background;
@@ -120,4 +126,40 @@ public class WrapperComponent<C extends GuiComponent> extends AbstractGuiCompone
         if(component != null && isActive())
             component.keyReleased(keyCode);
     }
+
+	@Override
+	public Collection<ImageShowingComponent.Pair> getShowingComponents() {
+		if (component instanceof ImageShowingComponent) {
+			return ((ImageShowingComponent) component).getShowingComponents();
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public Collection<BufferedImage> getShownImages() {
+		if (component instanceof ImageShowingComponent) {
+			return ((ImageShowingComponent) component).getShownImages();
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public TextShowingComponent.Pair getShowingComponent(String text) {
+		if (component instanceof TextShowingComponent) {
+			return ((TextShowingComponent) component).getShowingComponent(text);
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public Collection<TextShowingComponent.Pair> getShowingComponents(String text) {
+		if (component instanceof TextShowingComponent) {
+			return ((TextShowingComponent) component).getShowingComponents(text);
+		} else {
+			return Collections.emptyList();
+		}
+	}
 }

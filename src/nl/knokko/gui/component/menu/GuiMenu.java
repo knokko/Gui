@@ -23,6 +23,7 @@
  *******************************************************************************/
 package nl.knokko.gui.component.menu;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -36,10 +37,11 @@ import nl.knokko.gui.component.state.GuiComponentState;
 import nl.knokko.gui.component.state.RelativeComponentState;
 import nl.knokko.gui.keycode.KeyCode;
 import nl.knokko.gui.render.GuiRenderer;
+import nl.knokko.gui.testing.ImageShowingComponent;
 import nl.knokko.gui.testing.TextShowingComponent;
 import nl.knokko.gui.window.input.WindowInput;
 
-public abstract class GuiMenu extends AbstractGuiComponent implements TextShowingComponent {
+public abstract class GuiMenu extends AbstractGuiComponent implements TextShowingComponent, ImageShowingComponent {
 	
 	private List<SubComponent> components;
 	
@@ -260,6 +262,27 @@ public abstract class GuiMenu extends AbstractGuiComponent implements TextShowin
 		}
 		return collection;
 	}
+    
+    @Override
+    public Collection<ImageShowingComponent.Pair> getShowingComponents(){
+    	Collection<ImageShowingComponent.Pair> collection = new ArrayList<>();
+    	for (SubComponent sub : components) {
+    		if (sub.getComponent() instanceof ImageShowingComponent) {
+    			collection.addAll(((ImageShowingComponent) sub.getComponent()).getShowingComponents());
+    		}
+    	}
+    	return collection;
+    }
+    
+    @Override
+    public Collection<BufferedImage> getShownImages(){
+    	Collection<ImageShowingComponent.Pair> imageComponents = getShowingComponents();
+    	Collection<BufferedImage> images = new ArrayList<>(imageComponents.size());
+    	for (ImageShowingComponent.Pair pair : imageComponents) {
+    		images.addAll(pair.getComponent().getShownImages());
+    	}
+    	return images;
+    }
 	
 	protected void refreshMovement(){
 		float minX = 0;
