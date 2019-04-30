@@ -41,10 +41,10 @@ import nl.knokko.gui.util.TextBuilder.Properties;
 
 public class TextArrayEditMenu extends GuiMenu {
 	
-	protected static final BufferedImage ADD_IMAGE;
-	protected static final BufferedImage ADD_HOVER_IMAGE;
-	protected static final BufferedImage DELETE_IMAGE;
-	protected static final BufferedImage DELETE_HOVER_IMAGE;
+	public static final BufferedImage ADD_IMAGE;
+	public static final BufferedImage ADD_HOVER_IMAGE;
+	public static final BufferedImage DELETE_IMAGE;
+	public static final BufferedImage DELETE_HOVER_IMAGE;
 	
 	static {
 		try {
