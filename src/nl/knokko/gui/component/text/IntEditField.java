@@ -1,14 +1,19 @@
 package nl.knokko.gui.component.text;
 
+import nl.knokko.gui.util.Option;
 import nl.knokko.gui.util.TextBuilder.Properties;
 
 public class IntEditField extends TextEditField {
 
 	private final long minValue;
 	private final long maxValue;
+	
+	public IntEditField(long initial, long minValue, Properties passiveProperties, Properties activeProperties) {
+		this(initial, minValue, Long.MAX_VALUE, passiveProperties, activeProperties);
+	}
 
-	public IntEditField(long initial, Properties passiveProperties, Properties activeProperties, long minValue,
-			long maxValue) {
+	public IntEditField(long initial, long minValue, long maxValue, Properties passiveProperties, 
+			Properties activeProperties) {
 		super(initial + "", passiveProperties, activeProperties);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
@@ -21,52 +26,36 @@ public class IntEditField extends TextEditField {
 		}
 	}
 
-	public long getLong() {
-		long result;
-		if (text.isEmpty() || text.equals("-")) {
-			result = 0;
-		} else {
-			try {
-				result = Long.parseLong(text);
-			} catch (NumberFormatException ex) {
-				if (text.charAt(0) == '-') {
-					result = minValue;
-				} else {
-					result = maxValue;
-				}
+	/**
+	 * This method attempts to parse the text in this IntEditField to an integer.
+	 * If the text can't be parsed or is outside the allowed range (between minValue and maxValue), 
+	 * this method will return None.
+	 * If none of the above is the case, the integer written in this IntEditField will be returned.
+	 * 
+	 * @return the integer that is written in this edit field
+	 */
+	public Option.Long getLong() {
+		try {
+			long result = Long.parseLong(getText());
+			if (result >= minValue && result <= maxValue) {
+				return new Option.Long(result);
+			} else {
+				return Option.Long.NONE;
 			}
+		} catch (NumberFormatException ex) {
+			return Option.Long.NONE;
 		}
-		setText(result + "");
-		return result;
 	}
 
 	/**
-	 * This method simple casts the result of getLong() to int, you should make sure
-	 * the minValue and maxValue are in the int range.
+	 * This method attempts to parse the text in this IntEditField to an integer.
+	 * If the text can't be parsed, is outside the allowed range (between minValue and maxValue)
+	 * or is too big or small to be represented as int, this method will return None.
+	 * If none of the above is the case, the integer written in this IntEditField will be returned.
 	 * 
 	 * @return the integer that is written in this edit field
 	 */
-	public int getInt() {
-		return (int) getLong();
-	}
-
-	/**
-	 * This method simple casts the result of getLong() to short, you should make
-	 * sure the minValue and maxValue are in the short range.
-	 * 
-	 * @return the integer that is written in this edit field
-	 */
-	public short getShort() {
-		return (short) getLong();
-	}
-
-	/**
-	 * This method simple casts the result of getLong() to byte, you should make
-	 * sure the minValue and maxValue are in the byte range.
-	 * 
-	 * @return the integer that is written in this edit field
-	 */
-	public byte getByte() {
-		return (byte) getByte();
+	public Option.Int getInt() {
+		return getLong().toInt();
 	}
 }
