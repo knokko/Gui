@@ -808,4 +808,63 @@ public abstract class GuiTestHelper {
 	public void assertNearestImage(String from, BufferedImage image, int amount) {
 		assertNearestImage(getComponentWithText(from), image, amount);
 	}
+	
+	/**
+	 * Clicks on the nearest image (searching from the parameter 'from') that is equal to the parameter
+	 * 'image'. With equal, I mean that the width, height and all pixels are exactly the same.
+	 * The totalAmount parameter should be the total amount of images that are shown in the window, that is
+	 * to prevent clicking the wrong image if another image is loaded earlier.
+	 * @param from The point where to find the closest image from
+	 * @param image The image that should be clicked on
+	 * @param totalAmount The total amount of images shown in the window
+	 */
+	public void clickNearestImage(Point2D.Float from, BufferedImage image, int totalAmount) {
+		Collection<ImageShowingComponent.Pair> allImages = getAllImages(totalAmount);
+		
+		// Since infinity is the largest number, everything else is lower and thus this
+		// will be overwritten by the first image found, no matter how far away it is
+		double bestDistanceSq = Double.POSITIVE_INFINITY;
+		Point2D.Float nearestImage = null;
+		
+		for (ImageShowingComponent.Pair maybe : allImages) {
+			double distanceSq = maybe.getPosition().distanceSq(from);
+			if (distanceSq < bestDistanceSq) {
+				Collection<BufferedImage> shownImages = maybe.getComponent().getShownImages();
+				for (BufferedImage shownImage : shownImages) {
+					if (compareImages(image, shownImage)) {
+						nearestImage = maybe.getPosition();
+						bestDistanceSq = distanceSq;
+					}
+				}
+			}
+		}
+		
+		click(nearestImage.x, nearestImage.y);
+	}
+	
+	/**
+	 * Clicks on the nearest image (searching from the parameter 'from') that is equal to the parameter
+	 * 'image'. With equal, I mean that the width, height and all pixels are exactly the same.
+	 * The totalAmount parameter should be the total amount of images that are shown in the window, that is
+	 * to prevent clicking the wrong image if another image is loaded earlier.
+	 * @param from The point where to find the closest image from
+	 * @param image The image that should be clicked on
+	 * @param totalAmount The total amount of images shown in the window
+	 */
+	public void clickNearestImage(GuiComponent from, BufferedImage image, int totalAmount) {
+		clickNearestImage(new Point2D.Float(from.getState().getMidX(), from.getState().getMidY()), image, totalAmount);
+	}
+	
+	/**
+	 * Clicks on the nearest image (searching from the text component with text from) that is equal to the parameter
+	 * 'image'. With equal, I mean that the width, height and all pixels are exactly the same.
+	 * The totalAmount parameter should be the total amount of images that are shown in the window, that is
+	 * to prevent clicking the wrong image if another image is loaded earlier.
+	 * @param from The point where to find the closest image from
+	 * @param image The image that should be clicked on
+	 * @param totalAmount The total amount of images shown in the window
+	 */
+	public void clickNearestImage(String from, BufferedImage image, int totalAmount) {
+		clickNearestImage(getComponentWithText(from), image, totalAmount);
+	}
 }
