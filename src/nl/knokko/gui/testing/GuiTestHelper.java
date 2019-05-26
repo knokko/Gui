@@ -1,5 +1,6 @@
 package nl.knokko.gui.testing;
 
+import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -508,6 +509,14 @@ public abstract class GuiTestHelper {
 		}
 		pressAndReleaseNow(keycode);
 		typeDelay();
+	}
+	
+	/**
+	 * Presses and releases the backspace key amount times in a row.
+	 * @param amount The number of times to press and release the backspace key
+	 */
+	public void backspace(int amount) {
+		pressAndRelease(KeyEvent.VK_BACK_SPACE, amount);
 	}
 
 	/**
