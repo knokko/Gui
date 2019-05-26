@@ -24,10 +24,12 @@
 package nl.knokko.gui.texture.loader;
 
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URL;
+
+import javax.imageio.ImageIO;
 
 import nl.knokko.gui.texture.GuiTexture;
 import nl.knokko.gui.texture.ImageGuiTexture;
@@ -51,10 +53,12 @@ public class AWTTextureLoader implements GuiTextureLoader {
 			output.println("AWTTextureLoader: Can't find image '" + texturePath + "'.");
 			return null;
 		}
-		Image image = Toolkit.getDefaultToolkit().getImage(resource);
-		if(image == null)
+		try {
+			return ImageIO.read(resource);
+		} catch (IOException e) {
 			output.println("AWTTextureLoader: Can't read image '" + texturePath + "'.");
-		return image;
+			return null;
+		}
 	}
 
 	public GuiTexture loadTexture(String texturePath, int minX, int minY, int maxX, int maxY) {
