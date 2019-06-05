@@ -37,11 +37,14 @@ import nl.knokko.gui.component.state.GuiComponentState;
 import nl.knokko.gui.component.state.RelativeComponentState;
 import nl.knokko.gui.keycode.KeyCode;
 import nl.knokko.gui.render.GuiRenderer;
+import nl.knokko.gui.testing.CheckableComponent;
+import nl.knokko.gui.testing.EditableComponent;
 import nl.knokko.gui.testing.ImageShowingComponent;
 import nl.knokko.gui.testing.TextShowingComponent;
 import nl.knokko.gui.window.input.WindowInput;
 
-public abstract class GuiMenu extends AbstractGuiComponent implements TextShowingComponent, ImageShowingComponent {
+public abstract class GuiMenu extends AbstractGuiComponent 
+implements TextShowingComponent, ImageShowingComponent, CheckableComponent, EditableComponent {
 	
 	private List<SubComponent> components;
 	
@@ -282,6 +285,28 @@ public abstract class GuiMenu extends AbstractGuiComponent implements TextShowin
     		images.addAll(pair.getComponent().getShownImages());
     	}
     	return images;
+    }
+    
+    @Override
+    public Collection<CheckableComponent.Pair> getCheckboxCenters(){
+    	Collection<CheckableComponent.Pair> collection = new ArrayList<>();
+    	for (SubComponent sub : components) {
+    		if (sub.getComponent() instanceof CheckableComponent) {
+    			collection.addAll(((CheckableComponent) sub.getComponent()).getCheckboxCenters());
+    		}
+    	}
+    	return collection;
+    }
+    
+    @Override
+    public Collection<EditableComponent.Pair> getEditableLocations(){
+    	Collection<EditableComponent.Pair> collection = new ArrayList<>();
+    	for (SubComponent component : components) {
+    		if (component.getComponent() instanceof EditableComponent) {
+    			collection.addAll(((EditableComponent) component.getComponent()).getEditableLocations());
+    		}
+    	}
+    	return collection;
     }
 	
 	protected void refreshMovement(){

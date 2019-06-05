@@ -30,10 +30,13 @@ import java.util.Collections;
 import nl.knokko.gui.color.GuiColor;
 import nl.knokko.gui.component.state.GuiComponentState;
 import nl.knokko.gui.render.GuiRenderer;
+import nl.knokko.gui.testing.CheckableComponent;
+import nl.knokko.gui.testing.EditableComponent;
 import nl.knokko.gui.testing.ImageShowingComponent;
 import nl.knokko.gui.testing.TextShowingComponent;
 
-public class WrapperComponent<C extends GuiComponent> extends AbstractGuiComponent implements TextShowingComponent, ImageShowingComponent {
+public class WrapperComponent<C extends GuiComponent> extends AbstractGuiComponent 
+implements TextShowingComponent, ImageShowingComponent, CheckableComponent, EditableComponent {
     
     protected C component;
     protected GuiColor background;
@@ -160,6 +163,24 @@ public class WrapperComponent<C extends GuiComponent> extends AbstractGuiCompone
 			return ((TextShowingComponent) component).getShowingComponents(text);
 		} else {
 			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public Collection<CheckableComponent.Pair> getCheckboxCenters() {
+		if (component instanceof CheckableComponent) {
+			return ((CheckableComponent) component).getCheckboxCenters();
+		} else {
+			return Collections.emptySet();
+		}
+	}
+	
+	@Override
+	public Collection<EditableComponent.Pair> getEditableLocations() {
+		if (component instanceof EditableComponent) {
+			return ((EditableComponent) component).getEditableLocations();
+		} else {
+			return Collections.emptySet();
 		}
 	}
 }

@@ -23,14 +23,19 @@
  *******************************************************************************/
 package nl.knokko.gui.component.text;
 
+import java.awt.geom.Point2D.Float;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import nl.knokko.gui.keycode.KeyCode;
 import nl.knokko.gui.mousecode.MouseCode;
 import nl.knokko.gui.render.GuiRenderer;
+import nl.knokko.gui.testing.EditableComponent;
 import nl.knokko.gui.texture.GuiTexture;
 import nl.knokko.gui.util.TextBuilder;
 import nl.knokko.gui.util.TextBuilder.Properties;
 
-public class TextEditField extends TextComponent {
+public class TextEditField extends TextComponent implements EditableComponent {
 	
 	protected GuiTexture activeTexture;
 	protected Properties activeProperties;
@@ -109,5 +114,12 @@ public class TextEditField extends TextComponent {
 				updateTexture();
 			}
 		}
+	}
+
+	@Override
+	public Collection<EditableComponent.Pair> getEditableLocations() {
+		Collection<EditableComponent.Pair> points = new ArrayList<>(1);
+		points.add(new EditableComponent.Pair(this, new Float(state.getMidX(), state.getMidY())));
+		return points;
 	}
 }

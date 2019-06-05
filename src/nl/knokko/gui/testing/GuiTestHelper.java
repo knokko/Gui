@@ -423,6 +423,75 @@ public abstract class GuiTestHelper {
 		throw new TestException("There should have been " + amount + " components with text " + text + ", but only "
 				+ previousAmount + " were found");
 	}
+	
+	/**
+	 * Gets all editable components along with their locations on the screen. If the number of found editable
+	 * components does not equal amountOfEdits, this method will retry until they are equal and throw a
+	 * TestException if it takes too long.
+	 * @param amountOfEdits The number of editable components that should be in the window
+	 * @return A collection containing all editable components along with their screen position
+	 */
+	public Collection<EditableComponent.Pair> getEdits(int amountOfEdits) {
+		int previousAmount = -1;
+		for (int counter = 0; counter < 256; counter++) {
+			try {
+				GuiComponent main = window.getMainComponent();
+				if (main instanceof EditableComponent) {
+					Collection<EditableComponent.Pair> all = ((EditableComponent) main).getEditableLocations();
+					if (all.size() != amountOfEdits) {
+						System.out.println("Delay a while in getEdits");
+						delay(delayTime);
+						previousAmount = all.size();
+						continue;
+					}
+					return all;
+				} else {
+					System.out.println("Delay a while in getEdits");
+					delay(delayTime);
+					previousAmount = 0;
+					continue;
+				}
+			} catch (ConcurrentModificationException concurrency) {
+				// The application has added components while we were iterating over them
+				// So just wait for the application to finish
+				System.out.println("Delay a while in catch getEdits");
+				delay(delayTime);
+			}
+		}
+		throw new TestException("There should have been " + amountOfEdits + " edit fields, but " + previousAmount + " were found");
+	}
+	
+	/**
+	 * Gets the editable component along with its position that is closest to (the parameter) from. The total
+	 * amount of editable components in the window must be equal to amountOfEdits (the parameter).
+	 * @param from The point to find the nearest editable component from
+	 * @param amountOfEdits The total amount of editable components currently in the window
+	 * @return The editable component and its position that is closest to from
+	 */
+	public EditableComponent.Pair getNearestEdit(Point2D.Float from, int amountOfEdits){
+		Collection<EditableComponent.Pair> edits = getEdits(amountOfEdits);
+		double closestDistanceSq = Double.POSITIVE_INFINITY;
+		EditableComponent.Pair closest = null;
+		for (EditableComponent.Pair edit : edits) {
+			double distance = edit.getLocation().distance(from);
+			if (distance < closestDistanceSq) {
+				closest = edit;
+				closestDistanceSq = distance;
+			}
+		}
+		return closest;
+	}
+	
+	/**
+	 * Clicks on the editable component that is closest to the text component with text from (the parameter).
+	 * The total amount of editable components in the window must be equal to amountOfEdits.
+	 * @param from The text of the component from where to search the nearest editable component
+	 * @param amountOfEdits The total amount of editable components in the window
+	 */
+	public void clickNearestEdit(String from, int amountOfEdits){
+		Point2D.Float point = getNearestEdit(getPairWithText(from).getPosition(), amountOfEdits).getLocation();
+		click(point.x, point.y);
+	}
 
 	/**
 	 * Attempts to click at the middle of a component that claims to show the
@@ -875,5 +944,118 @@ public abstract class GuiTestHelper {
 	 */
 	public void clickNearestImage(String from, BufferedImage image, int totalAmount) {
 		clickNearestImage(getComponentWithText(from), image, totalAmount);
+	}
+	
+	/**
+	 * Finds the nearest checkbox to the given point. The total amount of
+	 * checkboxes is needed to make sure all checkbox are taken into account.
+	 * @param nearest The point where the result checkbox will be close to
+	 * @param totalAmount The total number of checkboxes on the window
+	 * @return The center of the location of the checkbox closest to nearest
+	 */
+	public CheckableComponent.Pair getCheckbox(Point2D.Float nearest, int totalAmount) {
+		for (int counter = 0; counter < 256; counter++) {
+			try {
+				GuiComponent main = window.getMainComponent();
+				if (main instanceof CheckableComponent) {
+					Collection<CheckableComponent.Pair> centers = ((CheckableComponent) main).getCheckboxCenters();
+					if (centers.size() == totalAmount) {
+						CheckableComponent.Pair best = null;
+						double bestDistance = Double.POSITIVE_INFINITY;
+						for (CheckableComponent.Pair center : centers) {
+							double distance = center.getCenter().distanceSq(nearest);
+							if (distance < bestDistance) {
+								best = center;
+								bestDistance = distance;
+							}
+						}
+						return best;
+					} else {
+						delay(delayTime);
+						System.out.println("Delay a while in getCheckboxLocation");
+						continue;
+					}
+				} else {
+					delay(delayTime);
+					System.out.println("Delay a while in getCheckboxLocation");
+					continue;
+				}
+			} catch (ConcurrentModificationException concurrency) {
+				// Usually, ignoring this is really bad.
+				// But in this case, it means that the application is currently adding its
+				// components
+				System.out.println("Delay a while in catch getCheckboxLocation");
+				delay(delayTime);
+			}
+		}
+		System.out.println("getPairWithText timed out");
+		return null;
+	}
+	
+	/**
+	 * Finds the nearest checkbox to the given component. The total amount of
+	 * checkboxes is needed to make sure all checkbox are taken into account.
+	 * @param nearest The component where the result checkbox will be close to
+	 * @param totalAmount The total number of checkboxes on the window
+	 * @return The checkbox closest to nearest
+	 */
+	public CheckableComponent.Pair getCheckbox(GuiComponent nearest, int totalAmount){
+		return getCheckbox(new Point2D.Float(nearest.getState().getMidX(), nearest.getState().getMidY()), totalAmount);
+	}
+	
+	/**
+	 * Finds the nearest checkbox to the component with the given text. 
+	 * The total amount of checkboxes is needed to make sure all checkbox are taken into account.
+	 * @param nearest The text of the component where the result checkbox will be close to
+	 * @param totalAmount The total number of checkboxes on the window
+	 * @return The checkbox closest to the component with text nearest
+	 */
+	public CheckableComponent.Pair getCheckbox(String nearest, int totalAmount){
+		return getCheckbox(getComponentWithText(nearest), totalAmount);
+	}
+	
+	/**
+	 * Toggles the checkbox closest to the component with text nearest.
+	 * The total amount of checkboxes is needed to make sure all checkbox are taken into account.
+	 * @param nearest The text of the component that the checkbox should be close to
+	 * @param totalAmount The total number of checkboxes in the window
+	 */
+	public void toggle(String nearest, int totalAmount) {
+		Point2D.Float location = getCheckbox(nearest, totalAmount).getCenter();
+		click(location.x, location.y);
+	}
+	
+	/**
+	 * Checks the checkbox closest to the commponent with the given text. The total amount of checkboxes is 
+	 * needed to make sure all checkbox are taken into account. If it is already checked, a TestException is 
+	 * thrown.
+	 * @param nearest The text of the component the target checkbox should be close to
+	 * @param totalAmount The total amount of checkboxes in the window
+	 */
+	public void check(String nearest, int totalAmount) {
+		CheckableComponent.Pair checkbox = getCheckbox(nearest, totalAmount);
+		if (checkbox.isChecked()) {
+			throw new TestException("The checkbox closest to " + nearest + " is already checked");
+		} else {
+			Point2D.Float location = checkbox.getCenter();
+			click(location.x, location.y);
+		}
+	}
+	
+	/**
+	 * Unchecks the checkbox closest to the commponent with the given text. The total amount of checkboxes is 
+	 * needed to make sure all checkbox are taken into account. If it is not checked, a TestException is 
+	 * thrown.
+	 * @param nearest The text of the component the target checkbox should be close to
+	 * @param totalAmount The total amount of checkboxes in the window
+	 */
+	public void uncheck(String nearest, int totalAmount) {
+		CheckableComponent.Pair checkbox = getCheckbox(nearest, totalAmount);
+		if (!checkbox.isChecked()) {
+			throw new TestException("The checkbox closest to " + nearest + " is not checked");
+		} else {
+			Point2D.Float location = checkbox.getCenter();
+			click(location.x, location.y);
+		}
 	}
 }

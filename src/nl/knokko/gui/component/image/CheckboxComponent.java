@@ -23,12 +23,17 @@
  *******************************************************************************/
 package nl.knokko.gui.component.image;
 
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import nl.knokko.gui.component.AbstractGuiComponent;
 import nl.knokko.gui.render.GuiRenderer;
+import nl.knokko.gui.testing.CheckableComponent;
 import nl.knokko.gui.texture.GuiTexture;
 import nl.knokko.gui.texture.loader.GuiTextureLoader;
 
-public class CheckboxComponent extends AbstractGuiComponent {
+public class CheckboxComponent extends AbstractGuiComponent implements CheckableComponent {
 	
 	protected static GuiTexture baseImage;
 	protected static GuiTexture hoverImage;
@@ -111,4 +116,11 @@ public class CheckboxComponent extends AbstractGuiComponent {
 
 	@Override
 	public void keyReleased(int keyCode) {}
+
+	@Override
+	public Collection<CheckableComponent.Pair> getCheckboxCenters() {
+		Collection<CheckableComponent.Pair> result = new ArrayList<>(1);
+		result.add(new CheckableComponent.Pair(new Point2D.Float(state.getMidX(), state.getMidY()), checked));
+		return result;
+	}
 }
