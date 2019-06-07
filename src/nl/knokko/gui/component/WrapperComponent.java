@@ -82,7 +82,7 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
     @Override
     public void update() {
         if(component != null && isActive())
-            component.init();
+            component.update();
     }
 
     @Override
