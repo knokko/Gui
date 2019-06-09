@@ -49,7 +49,7 @@ public abstract class GuiTestHelper {
 	 */
 	public void setDelayTime(int millis) {
 		delayTime = millis;
-		typeDelayTime = millis / 3;
+		typeDelayTime = millis / 7;
 	}
 
 	/**
