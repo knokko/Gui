@@ -24,7 +24,6 @@
 package nl.knokko.gui.window;
 
 import java.awt.Frame;
-import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
@@ -36,7 +35,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import nl.knokko.gui.component.GuiComponent;
@@ -74,7 +72,7 @@ public class AWTGuiWindow extends GuiWindow {
 	
 	public AWTGuiWindow(){
 		textureLoader = new AWTTextureLoader();
-		guiRenderer = new AWTGuiRenderer();
+		guiRenderer = new AWTGuiRenderer(this);
 		charBuilder = new CharBuilder(textureLoader);
 	}
 	
@@ -115,7 +113,8 @@ public class AWTGuiWindow extends GuiWindow {
 	
 	@Override
 	protected void directRender(){
-		frame.repaint();
+		mainComponent.render(guiRenderer);
+		guiRenderer.maybeRenderNow();
 	}
 	
 	@Override
@@ -126,7 +125,7 @@ public class AWTGuiWindow extends GuiWindow {
 	@Override
 	protected void directOpen(String title, int width, int height, boolean border) {
 		frame = new JFrame();
-		frame.add(new AWTPanel());
+		frame.add(guiRenderer.createPanel());
 		frame.setUndecorated(!border);
 		frame.setSize(width, height);
 		frame.setTitle(title);
@@ -142,7 +141,7 @@ public class AWTGuiWindow extends GuiWindow {
 	@Override
 	protected void directOpen(String title, boolean border) {
 		frame = new JFrame();
-		frame.add(new AWTPanel());
+		frame.add(guiRenderer.createPanel());
 		frame.setUndecorated(!border);
 		frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		frame.setTitle(title);
@@ -233,18 +232,6 @@ public class AWTGuiWindow extends GuiWindow {
 		if (mouse != null && prevMouseY != -1)
 			return (float) -(mouse.y - prevMouseY) / (frame.getHeight() - insets.top - insets.bottom);
 		return 0;
-	}
-	
-	private class AWTPanel extends JPanel {
-
-		private static final long serialVersionUID = -1226511423029324679L;
-		
-		@Override
-		public void paint(Graphics g){
-			Insets insets = frame.getInsets();
-			guiRenderer.set(g, 0, 0, frame.getWidth() - 1 - insets.right - insets.left, frame.getHeight() - 1 - insets.bottom - insets.top);
-			mainComponent.render(guiRenderer);
-		}
 	}
 	
 	private class Listener implements KeyListener, MouseListener, MouseWheelListener, MouseMotionListener {

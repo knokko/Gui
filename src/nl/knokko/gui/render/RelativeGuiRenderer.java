@@ -28,7 +28,7 @@ import nl.knokko.gui.texture.GuiTexture;
 
 public class RelativeGuiRenderer {
 	
-	public static class Static implements GuiRenderer {
+	public static class Static extends GuiRenderer {
 		
 		private final GuiRenderer parent;
 		
@@ -70,7 +70,7 @@ public class RelativeGuiRenderer {
 		}
 	}
 	
-	public static class Dynamic implements GuiRenderer {
+	public static class Dynamic extends GuiRenderer {
 		
 		private final State state;
 		
