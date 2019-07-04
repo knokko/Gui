@@ -61,6 +61,7 @@ public abstract class GuiWindow {
 	 */
 	public void setRenderContinuously(boolean value) {
 		renderContinuously = value;
+		getRenderer().setRenderAlways(value);
 	}
 	
 	/**

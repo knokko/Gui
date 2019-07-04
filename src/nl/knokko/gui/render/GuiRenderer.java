@@ -59,27 +59,15 @@ public abstract class GuiRenderer {
 	}
 
 	public void renderTexture(GuiTexture texture, float minX, float minY, float maxX, float maxY) {
-		if (renderAlways) {
-			renderTextureNow(texture, minX, minY, maxX, maxY);
-		} else {
-			currentCommands.add(new CommandTexture(texture, minX, minY, maxX, maxY));
-		}
+		currentCommands.add(new CommandTexture(texture, minX, minY, maxX, maxY));
 	}
 
 	public void fill(GuiColor color, float minX, float minY, float maxX, float maxY) {
-		if (renderAlways) {
-			fillNow(color, minX, minY, maxX, maxY);
-		} else {
-			currentCommands.add(new CommandFill(color, minX, minY, maxX, maxY));
-		}
+		currentCommands.add(new CommandFill(color, minX, minY, maxX, maxY));
 	}
 
 	public void clear(GuiColor color) {
-		if (renderAlways) {
-			clearNow(color);
-		} else {
-			currentCommands.add(new CommandClear(color));
-		}
+		currentCommands.add(new CommandClear(color));
 	}
 
 	public void maybeRenderNow() {
@@ -93,6 +81,12 @@ public abstract class GuiRenderer {
 			} else {
 				currentCommands.clear();
 			}
+		} else {
+			renderNow(currentCommands);
+			List<RenderCommand> storePreviousCommands = previousCommands;
+			previousCommands = currentCommands;
+			currentCommands = storePreviousCommands;
+			currentCommands.clear();
 		}
 	}
 	
