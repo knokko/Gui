@@ -64,6 +64,8 @@ public class FileChooserMenu extends GuiMenu {
 		this.filter = filter;
 		this.directory = new File("").getAbsoluteFile();
 		this.parentDirectory = directory.getParentFile();
+		
+		// TODO Add a constructor for custom props and background color
 	}
 
 	@Override
@@ -121,6 +123,8 @@ public class FileChooserMenu extends GuiMenu {
 			for(File file : files) {
 				try {
 					if(file.isDirectory() || filter.accept(file)) {
+						
+						// TODO Reuse buffered images containing icons
 						Image icon = ShellFolder.getShellFolder(file).getIcon(true);
 						BufferedImage image = new BufferedImage(icon.getWidth(null), icon.getHeight(null), BufferedImage.TYPE_INT_ARGB);
 						Graphics2D g = image.createGraphics();
