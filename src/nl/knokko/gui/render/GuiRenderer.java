@@ -74,19 +74,15 @@ public abstract class GuiRenderer {
 		if (!renderAlways) {
 			if (!previousCommands.equals(currentCommands)) {
 				renderNow(currentCommands);
-				List<RenderCommand> storePreviousCommands = previousCommands;
 				previousCommands = currentCommands;
-				currentCommands = storePreviousCommands;
-				currentCommands.clear();
+				currentCommands = new ArrayList<>(currentCommands.size());
 			} else {
 				currentCommands.clear();
 			}
 		} else {
 			renderNow(currentCommands);
-			List<RenderCommand> storePreviousCommands = previousCommands;
 			previousCommands = currentCommands;
-			currentCommands = storePreviousCommands;
-			currentCommands.clear();
+			currentCommands = new ArrayList<>(currentCommands.size());
 		}
 	}
 	
