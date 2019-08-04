@@ -383,7 +383,7 @@ public abstract class GuiTestHelper {
 					if (all.size() != amount) {
 						System.out.println("Delay a while in clickNearest");
 						delay(delayTime);
-						previousAmount = amount;
+						previousAmount = all.size();
 						continue;
 					}
 					Point2D.Float middleFrom = new Point2D.Float(from.getState().getMidX(), from.getState().getMidY());
