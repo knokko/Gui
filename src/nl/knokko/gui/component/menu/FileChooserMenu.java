@@ -43,14 +43,14 @@ import nl.knokko.gui.util.TextBuilder.Properties;
 
 public class FileChooserMenu extends GuiMenu {
 
-	public static final Properties CANCEL_PROPERTIES = Properties.createButton(new Color(200, 200, 200),
+	public static final Properties DEFAULT_CANCEL_PROPERTIES = Properties.createButton(new Color(200, 200, 200),
 			new Color(150, 150, 250));
-	public static final Properties CANCEL_HOVER_PROPERTIES = Properties.createButton(Color.WHITE,
+	public static final Properties DEFAULT_CANCEL_HOVER_PROPERTIES = Properties.createButton(Color.WHITE,
 			new Color(200, 200, 255));
 
-	public static final Properties SELECT_PROPERTIES = Properties.createButton(new Color(150, 150, 200),
+	public static final Properties DEFAULT_SELECT_PROPERTIES = Properties.createButton(new Color(150, 150, 200),
 			new Color(120, 120, 250));
-	public static final Properties SELECT_HOVER_PROPERTIES = Properties.createButton(new Color(100, 100, 255),
+	public static final Properties DEFAULT_SELECT_HOVER_PROPERTIES = Properties.createButton(new Color(100, 100, 255),
 			Color.BLUE);
 
 	protected final FileListener listener;
@@ -61,33 +61,49 @@ public class FileChooserMenu extends GuiMenu {
 	protected File selectedFile;
 	protected File directory;
 	protected File parentDirectory;
+	
+	protected final Properties cancelProps, cancelHover, selectProps, selectHover;
+	protected final GuiColor background, listBackground;
 
-	public FileChooserMenu(GuiComponent returnMenu, FileListener listener, FileFilter filter) {
+	public FileChooserMenu(GuiComponent returnMenu, FileListener listener, FileFilter filter, 
+			Properties cancelProps, Properties cancelHover, Properties selectProps, Properties selectHover,
+			GuiColor background, GuiColor listBackground) {
 		this.returnMenu = returnMenu;
 		this.listener = listener;
 		this.filter = filter;
 		this.directory = new File("").getAbsoluteFile();
 		this.parentDirectory = directory.getParentFile();
 
-		// TODO Add a constructor for custom props and background color
+		this.cancelProps = cancelProps;
+		this.cancelHover = cancelHover;
+		this.selectProps = selectProps;
+		this.selectHover = selectHover;
+		this.background = background;
+		this.listBackground = listBackground;
+	}
+	
+	public FileChooserMenu(GuiComponent returnMenu, FileListener listener, FileFilter filter) {
+		this(returnMenu, listener, filter, DEFAULT_CANCEL_PROPERTIES, DEFAULT_CANCEL_HOVER_PROPERTIES,
+				DEFAULT_SELECT_PROPERTIES, DEFAULT_SELECT_HOVER_PROPERTIES, 
+				SimpleGuiColor.BLUE, DEFAULT_LIST_BACKGROUND);
 	}
 
 	@Override
 	protected void addComponents() {
 		list = new FileList();
 		addComponent(list, 0f, 0.14f, 1f, 0.86f);
-		addComponent(new SimpleColorComponent(SimpleGuiColor.BLUE), 0f, 0f, 1f, 0.14f);
-		addComponent(new TextButton("Cancel", CANCEL_PROPERTIES, CANCEL_HOVER_PROPERTIES, () -> {
+		addComponent(new SimpleColorComponent(background), 0f, 0f, 1f, 0.14f);
+		addComponent(new TextButton("Cancel", cancelProps, cancelHover, () -> {
 			state.getWindow().setMainComponent(returnMenu);
 		}), 0.2f, 0.02f, 0.35f, 0.12f);
-		addComponent(new ConditionalTextButton("Select", SELECT_PROPERTIES, SELECT_HOVER_PROPERTIES, () -> {
+		addComponent(new ConditionalTextButton("Select", selectProps, selectHover, () -> {
 			listener.onChoose(selectedFile);
 			state.getWindow().setMainComponent(returnMenu);
 		}, () -> {
 			return selectedFile != null;
 		}), 0.6f, 0.02f, 0.75f, 0.12f);
-		addComponent(new SimpleColorComponent(SimpleGuiColor.BLUE), 0f, 0.86f, 1f, 1f);
-		addComponent(new ConditionalTextButton("Go up", CANCEL_PROPERTIES, CANCEL_HOVER_PROPERTIES, () -> {
+		addComponent(new SimpleColorComponent(background), 0f, 0.86f, 1f, 1f);
+		addComponent(new ConditionalTextButton("Go up", cancelProps, cancelHover, () -> {
 			setDirectory(parentDirectory);
 		}, () -> {
 			return parentDirectory != null;
@@ -101,7 +117,7 @@ public class FileChooserMenu extends GuiMenu {
 		state.getWindow().markChange();
 	}
 
-	private static final GuiColor LIST_BACKGROUND = new SimpleGuiColor(0, 0, 150);
+	private static final GuiColor DEFAULT_LIST_BACKGROUND = new SimpleGuiColor(0, 0, 150);
 
 	public static final Properties FILE_NAME_PROPERTIES = Properties.createLabel(Color.BLACK, Color.WHITE, 512, 128);
 	public static final Properties FILE_NAME_HOVER_PROPERTIES = Properties.createLabel(new Color(50, 50, 50),
@@ -119,7 +135,7 @@ public class FileChooserMenu extends GuiMenu {
 
 		@Override
 		public GuiColor getBackgroundColor() {
-			return LIST_BACKGROUND;
+			return listBackground;
 		}
 
 		protected void setDirectory() {
