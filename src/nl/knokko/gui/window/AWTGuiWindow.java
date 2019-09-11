@@ -33,8 +33,10 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import nl.knokko.gui.component.GuiComponent;
@@ -111,47 +113,84 @@ public class AWTGuiWindow extends GuiWindow {
 		}
 	}
 	
+	private void invokeLater(Runnable action) {
+		if (Thread.currentThread().getName().contains("AWT-EventQueue-")) {
+			action.run();
+		} else {
+			SwingUtilities.invokeLater(action);
+		}
+	}
+	
 	@Override
 	protected void directRender(){
-		mainComponent.render(guiRenderer);
-		guiRenderer.maybeRenderNow();
+		invokeLater(() -> {
+			mainComponent.render(guiRenderer);
+			guiRenderer.maybeRenderNow();
+		});
+	}
+	
+	@Override
+	public void update() {
+		invokeLater(() -> {
+			super.update();
+		});
+	}
+	
+	@Override
+	public void setMainComponent(GuiComponent component) {
+		invokeLater(() -> {
+			super.setMainComponent(component);
+		});
 	}
 	
 	@Override
 	protected void directClose(){
-		frame.dispose();
+		invokeLater(() -> {
+			frame.dispose();
+		});
+	}
+	
+	@Override
+	protected void setMainComponentState() {
+		invokeLater(() -> {
+			super.setMainComponentState();
+		});
 	}
 	
 	@Override
 	protected void directOpen(String title, int width, int height, boolean border) {
-		frame = new JFrame();
-		frame.add(guiRenderer.createPanel());
-		frame.setUndecorated(!border);
-		frame.setSize(width, height);
-		frame.setTitle(title);
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		Listener l = new Listener();
-		frame.addKeyListener(l);
-		frame.addMouseListener(l);
-		frame.addMouseWheelListener(l);
-		frame.addMouseMotionListener(l);
+		invokeLater(() -> {
+			frame = new JFrame();
+			frame.add(guiRenderer.createPanel());
+			frame.setUndecorated(!border);
+			frame.setSize(width, height);
+			frame.setTitle(title);
+			frame.setVisible(true);
+			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			Listener l = new Listener();
+			frame.addKeyListener(l);
+			frame.addMouseListener(l);
+			frame.addMouseWheelListener(l);
+			frame.addMouseMotionListener(l);
+		});
 	}
 	
 	@Override
 	protected void directOpen(String title, boolean border) {
-		frame = new JFrame();
-		frame.add(guiRenderer.createPanel());
-		frame.setUndecorated(!border);
-		frame.setExtendedState(Frame.MAXIMIZED_BOTH);
-		frame.setTitle(title);
-		frame.setVisible(true);
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		Listener l = new Listener();
-		frame.addKeyListener(l);
-		frame.addMouseListener(l);
-		frame.addMouseWheelListener(l);
-		frame.addMouseMotionListener(l);
+		invokeLater(() -> {
+			frame = new JFrame();
+			frame.add(guiRenderer.createPanel());
+			frame.setUndecorated(!border);
+			frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+			frame.setTitle(title);
+			frame.setVisible(true);
+			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			Listener l = new Listener();
+			frame.addKeyListener(l);
+			frame.addMouseListener(l);
+			frame.addMouseWheelListener(l);
+			frame.addMouseMotionListener(l);
+		});
 	}
 	
 	@Override
@@ -163,6 +202,15 @@ public class AWTGuiWindow extends GuiWindow {
 	public void run(int fps){
 		int frameTime = 1000000000 / fps;
 		try {
+			
+			// First wait until the main component and frame have been set
+			try {
+				SwingUtilities.invokeAndWait(() -> {});
+			} catch (InvocationTargetException e) {
+				throw new RuntimeException(e);
+			}
+			
+			// Then start running
 			while(!shouldStopRunning && frame.isDisplayable()){
 				if(listener == null || !listener.preRunLoop()){
 					long startTime = System.nanoTime();

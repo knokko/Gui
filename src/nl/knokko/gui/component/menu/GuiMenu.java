@@ -48,11 +48,6 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 	
 	private List<SubComponent> components;
 	
-	private List<SubComponent> componentsToAdd;
-	private List<SubComponent> componentsToRemove;
-	
-	private boolean shouldClearComponents;
-	
 	/**
 	 * The screenCenterX determines what X-coordinate will be rendered in the middle of the screen.
 	 */
@@ -71,46 +66,16 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 	protected float scrollSpeed;
 	
 	protected boolean directRefresh;
-	protected int isIterating;
 	protected boolean didInit;
 	
 	public GuiMenu(){
 		super();
 		components = new ArrayList<SubComponent>();
-		componentsToAdd = new ArrayList<SubComponent>(1);
-		componentsToRemove = new ArrayList<SubComponent>(1);
 		scrollSpeed = 1f;
 	}
 	
 	protected void setScrollSpeed(float factor) {
 		scrollSpeed = factor;
-	}
-	
-	protected void afterIterating() {
-		isIterating--;
-		if(isIterating == 0) {
-			if(shouldClearComponents) {
-				components.clear();
-				shouldClearComponents = false;
-				if(directRefresh)
-					refreshMovement();
-				state.getWindow().markChange();
-			}
-			if(!componentsToAdd.isEmpty()) {
-				components.addAll(componentsToAdd);
-				componentsToAdd.clear();
-				if(directRefresh)
-					refreshMovement();
-				state.getWindow().markChange();
-			}
-			if(!componentsToRemove.isEmpty()) {
-				components.removeAll(componentsToRemove);
-				componentsToRemove.clear();
-				if(directRefresh)
-					refreshMovement();
-				state.getWindow().markChange();
-			}
-		}
 	}
 	
     @Override
@@ -128,11 +93,10 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 
     @Override
 	public void update() {
-    	isIterating++;
-		for(SubComponent component : components)
+    	List<SubComponent> componentsToUpdate = new ArrayList<>(components);
+		for(SubComponent component : componentsToUpdate)
 			if(component.isActive())
 				component.getComponent().update();
-		afterIterating();
 		if(allowArrowMoving()){
 			WindowInput input = state.getWindow().getInput();
 			if(input.isKeyDown(KeyCode.KEY_LEFT)) {
@@ -167,31 +131,27 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
         GuiColor background = getBackgroundColor();
         if(background != null)
             renderer.clear(background);
-        isIterating++;
 		for(SubComponent component : components)
 			if(component.isActive())
 				component.render(renderer);
-		afterIterating();
 	}
 
     @Override
 	public void click(float x, float y, int button) {
 		x += screenCenterX;
 		y += screenCenterY;
-		isIterating++;
-		for(SubComponent component : components)
+		List<SubComponent> componentsToClick = new ArrayList<>(components);
+		for(SubComponent component : componentsToClick)
 			if(component.isActive())
 				component.click(x, y, button);
-		afterIterating();
 	}
 
     @Override
 	public void clickOut(int button) {
-    	isIterating++;
-		for(SubComponent component : components)
+    	List<SubComponent> componentsToClick = new ArrayList<>(components);
+		for(SubComponent component : componentsToClick)
 			if(component.isActive())
 				component.getComponent().clickOut(button);
-		afterIterating();
 	}
 
     @Override
@@ -217,29 +177,26 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 	
     @Override
 	public void keyPressed(int keyCode) {
-    	isIterating++;
-		for(SubComponent component : components)
+    	List<SubComponent> componentsToPress = new ArrayList<>(components);
+		for(SubComponent component : componentsToPress)
 			if(component.isActive())
 				component.component.keyPressed(keyCode);
-		afterIterating();
 	}
 	
     @Override
 	public void keyPressed(char character) {
-    	isIterating++;
-		for(SubComponent component : components)
+    	List<SubComponent> componentsToPress = new ArrayList<>(components);
+		for(SubComponent component : componentsToPress)
 			if(component.isActive())
 				component.component.keyPressed(character);
-		afterIterating();
 	}
 
     @Override
 	public void keyReleased(int keyCode) {
-    	isIterating++;
-		for(SubComponent component : components)
+    	List<SubComponent> componentsToRelease = new ArrayList<>(components);
+		for(SubComponent component : componentsToRelease)
 			if(component.isActive())
 				component.component.keyReleased(keyCode);
-		afterIterating();
 	}
     
     @Override
@@ -314,7 +271,6 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 		float minY = 0;
 		float maxX = 1;
 		float maxY = 1;
-		isIterating++;
 		for(SubComponent component : components){
 			if(component.minX < minX)
 				minX = component.minX;
@@ -338,7 +294,6 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 		if(maxCenterY < 0)
 			maxCenterY = 0;
 		state.getWindow().markChange();
-		afterIterating();
 	}
 	
 	public GuiColor getBackgroundColor(){
@@ -354,14 +309,10 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 	}
 	
 	public void addComponent(SubComponent component){
-		if(isIterating != 0)
-			componentsToAdd.add(component);
-		else {
-			components.add(component);
-			if(directRefresh)
-				refreshMovement();
-			state.getWindow().markChange();
-		}
+		components.add(component);
+		if(directRefresh)
+			refreshMovement();
+		state.getWindow().markChange();
 	}
 	
 	public void addComponent(GuiComponent component, float minX, float minY, float maxX, float maxY){
@@ -369,45 +320,34 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 	}
 	
 	public void removeComponent(SubComponent component) {
-		if(isIterating != 0)
-			componentsToRemove.add(component);
-		else {
-			components.remove(component);
-			if(directRefresh)
-				refreshMovement();
-			state.getWindow().markChange();
-		}
+		components.remove(component);
+		if(directRefresh)
+			refreshMovement();
+		state.getWindow().markChange();
 	}
 	
 	public void removeComponent(GuiComponent component) {
 		for (SubComponent sub : components) {
 			if (sub.getComponent() == component) {
 				removeComponent(sub);
+				return;
 			}
 		}
 	}
 	
 	public void clearComponents() {
-		if(isIterating != 0) {
-			shouldClearComponents = true;
-		}
-		else {
-			components.clear();
-			if(directRefresh)
-				refreshMovement();
-			state.getWindow().markChange();
-		}
+		components.clear();
+		if(directRefresh)
+			refreshMovement();
+		state.getWindow().markChange();
 	}
 	
 	public SubComponent getComponentAt(float x, float y){
-		isIterating++;
 		for(SubComponent component : components) {
 			if(component.isActive() && component.inBounds(x, y)) {
-				afterIterating();
 				return component;
 			}
 		}
-		afterIterating();
 		return null;
 	}
 	

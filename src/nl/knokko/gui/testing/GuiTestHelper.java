@@ -266,13 +266,13 @@ public abstract class GuiTestHelper {
 					TextShowingComponent.Pair pair = ((TextShowingComponent) main).getShowingComponent(text);
 					if (pair == null) {
 						delay(delayTime);
-						System.out.println("Delay a while in getPairWithText");
+						System.out.println("Delay a while in getPairWithText1");
 						continue;
 					}
 					return pair;
 				} else {
 					delay(delayTime);
-					System.out.println("Delay a while in getPairWithText");
+					System.out.println("Delay a while in getPairWithText2");
 					continue;
 				}
 			} catch (ConcurrentModificationException concurrency) {
@@ -335,6 +335,12 @@ public abstract class GuiTestHelper {
 		TextShowingComponent.Pair pair = getPairWithText(text);
 		if (pair != null) {
 			Point2D.Float point = pair.getPosition();
+			if (point.x < 0 || point.x > 1 || point.y < 0 || point.y > 1) {
+				
+				// Delay to get a better overview
+				delay(1000);
+				throw new TestException("The component with text " + text + " is out of window bounds:" + point);
+			}
 			click(point.x, point.y, button);
 		} else {
 			throw new TestException("No component with text " + text + " can be found");

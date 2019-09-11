@@ -5,8 +5,10 @@ import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
 
 import nl.knokko.gui.window.GuiWindow;
 
@@ -79,14 +81,25 @@ public class GuiTester {
 	 * @throws IllegalStateException If a test is currently running
 	 */
 	public static void start(GuiTestProgram test, GuiWindow window) throws TestException, IllegalStateException {
-		window.open("Test Window", true);
 		Thread windowThread = new Thread(() -> {
+			try {
+				SwingUtilities.invokeAndWait(() -> {
+					window.open("Test Window", 1000, 600, true);
+				});
+			} catch (InvocationTargetException e) {
+				throw new RuntimeException(e);
+			} catch (InterruptedException e) {
+				System.out.println("Interrupted before running");
+				e.printStackTrace();
+				return;
+			}
 			window.run(60);
 		});
 		windowThread.start();
 		RobotTestHelper helper = new RobotTestHelper(window);
 		try {
 			start(test, helper);
+			System.out.println("The start method terminated");
 			window.stopRunning();
 		} catch (TestException testFailed) {
 			window.stopRunning();
