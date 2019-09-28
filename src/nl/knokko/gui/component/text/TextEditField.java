@@ -115,6 +115,20 @@ public class TextEditField extends TextComponent implements EditableComponent {
 			}
 		}
 	}
+	
+	public void setFocus() {
+		if (!active) {
+			active = true;
+			state.getWindow().markChange();
+		}
+	}
+	
+	public void loseFocus() {
+		if (active) {
+			active = false;
+			state.getWindow().markChange();
+		}
+	}
 
 	@Override
 	public Collection<EditableComponent.Pair> getEditableLocations() {
