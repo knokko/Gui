@@ -34,6 +34,14 @@ public class Option {
 			}
 		}
 		
+		public Short toShort() {
+			if (hasValue && value >= java.lang.Short.MIN_VALUE && value <= java.lang.Short.MAX_VALUE) {
+				return new Short((short) value);
+			} else {
+				return Short.NONE;
+			}
+		}
+		
 		public Int toInt() {
 			if (hasValue && value >= Integer.MIN_VALUE && value <= Integer.MAX_VALUE) {
 				return new Int((int) value);
@@ -72,6 +80,63 @@ public class Option {
 				return value;
 			} else {
 				throw new IllegalStateException("This int option has no value");
+			}
+		}
+		
+		public Short toShort() {
+			if (hasValue && value >= java.lang.Short.MIN_VALUE && value <= java.lang.Short.MAX_VALUE) {
+				return new Short((short) value);
+			} else {
+				return Short.NONE;
+			}
+		}
+		
+		public Long toLong() {
+			if (hasValue) {
+				return new Long(value);
+			} else {
+				return Long.NONE;
+			}
+		}
+	}
+	
+	public static class Short {
+		
+		public static final Short NONE = new Short();
+		
+		private final short value;
+		
+		private final boolean hasValue;
+		
+		public Short(short value) {
+			this.value = value;
+			this.hasValue = true;
+		}
+		
+		private Short() {
+			this.hasValue = false;
+			
+			// I will have to assign something either way
+			this.value = 0;
+		}
+		
+		public boolean hasValue() {
+			return hasValue;
+		}
+		
+		public short getValue() throws IllegalStateException {
+			if (hasValue) {
+				return value;
+			} else {
+				throw new IllegalStateException("This int option has no value");
+			}
+		}
+		
+		public Int toInt() {
+			if (hasValue) {
+				return new Int(value);
+			} else {
+				return Int.NONE;
 			}
 		}
 		
