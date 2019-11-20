@@ -14,7 +14,7 @@ public class FloatEditField extends TextEditField {
 
 	public FloatEditField(double initialValue, double minValue, double maxValue, Properties passiveProperties, 
 			Properties activeProperties) {
-		super(initialValue + "", passiveProperties, activeProperties);
+		super(String.format("%f", initialValue), passiveProperties, activeProperties);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 	}
