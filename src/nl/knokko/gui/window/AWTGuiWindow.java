@@ -337,15 +337,12 @@ public class AWTGuiWindow extends GuiWindow {
 			int[] codes = AWTConverter.getDirect(event.getKeyCode());
 			if(codes != null && codes[0] != KeyCode.UNDEFINED){
 				for(int code : codes){
-					if(!input.isKeyDown(code)){//awt can generate multiple keyPressed events before the keyReleased event if the key is being hold for a while.
-						//but because this does not happen in lwjgl, I disable this with the check above to keep both windows equal
-						if(listener == null || !listener.preKeyPressed(code)){
-							mainComponent.keyPressed(code);
-							if(listener != null)
-								listener.postKeyPressed(code);
-						}
-						input.setKeyDown(code);
+					if(listener == null || !listener.preKeyPressed(code)){
+						mainComponent.keyPressed(code);
+						if(listener != null)
+							listener.postKeyPressed(code);
 					}
+					input.setKeyDown(code);
 				}
 			}
 		}
