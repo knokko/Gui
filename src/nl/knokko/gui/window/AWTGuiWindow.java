@@ -26,6 +26,7 @@ package nl.knokko.gui.window;
 import java.awt.Frame;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -182,6 +183,17 @@ public class AWTGuiWindow extends GuiWindow {
 			frame.add(guiRenderer.createPanel());
 			frame.setUndecorated(!border);
 			frame.setExtendedState(Frame.MAXIMIZED_BOTH);
+			
+			/* 
+			 * When a user starts moving or resizing the window, it will resize to the 'size' of the window,
+			 * which is being set by this method. Notice that the 'size' will be ignored until the user starts
+			 * moving or resizing the window (it will stay fullscreen until then). 
+			 * 
+			 * To make moving and resizing a bit more pleasant, the 'size' will be set to the screen size divided by 2.
+			 */
+			Rectangle windowBounds = frame.getGraphicsConfiguration().getBounds();
+			frame.setSize(windowBounds.width / 2, windowBounds.height / 2);
+			
 			frame.setTitle(title);
 			frame.setVisible(true);
 			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
