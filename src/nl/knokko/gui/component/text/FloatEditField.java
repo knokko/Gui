@@ -1,5 +1,9 @@
 package nl.knokko.gui.component.text;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 import nl.knokko.gui.util.Option;
 import nl.knokko.gui.util.TextBuilder.Properties;
 
@@ -14,7 +18,9 @@ public class FloatEditField extends TextEditField {
 
 	public FloatEditField(double initialValue, double minValue, double maxValue, Properties passiveProperties, 
 			Properties activeProperties) {
-		super(String.format("%f", initialValue), passiveProperties, activeProperties);
+		super(new DecimalFormat("#.############", 
+				DecimalFormatSymbols.getInstance(Locale.ENGLISH)).format(initialValue), 
+				passiveProperties, activeProperties);
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 	}
