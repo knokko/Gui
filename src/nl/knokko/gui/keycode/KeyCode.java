@@ -24,6 +24,7 @@
 package nl.knokko.gui.keycode;
 
 import java.lang.reflect.Field;
+import java.util.Locale;
 
 public final class KeyCode {
 	
@@ -195,6 +196,6 @@ public final class KeyCode {
 		String name = NAME_MAP[key];
 		if(name == null)
 			return "unknown";
-		return name.toLowerCase();
+		return name.toLowerCase(Locale.ROOT);
 	}
 }
