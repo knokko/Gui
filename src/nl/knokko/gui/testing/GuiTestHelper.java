@@ -5,11 +5,13 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.SwingUtilities;
 
 import nl.knokko.gui.component.GuiComponent;
 import nl.knokko.gui.window.GuiWindow;
@@ -126,6 +128,7 @@ public abstract class GuiTestHelper {
 		if (stopped) {
 			throw new TestException("Test has been forced to stop");
 		}
+		delay();
 		moveMouseNow(destX, destY);
 		delay();
 	}
@@ -157,6 +160,7 @@ public abstract class GuiTestHelper {
 		if (stopped) {
 			throw new TestException("Test has been forced to stop");
 		}
+		delay();
 		clickNow(button);
 		delay();
 	}
@@ -196,7 +200,15 @@ public abstract class GuiTestHelper {
 	 * setDelayTime() method can be used to set that delay time.
 	 */
 	public void delay() {
-		delay(delayTime);
+		//delay(delayTime);
+		try {
+			// Wait for the gui thread to complete execution
+			SwingUtilities.invokeAndWait(() -> {});
+		} catch (InvocationTargetException e) {
+			throw new Error(e);
+		} catch (InterruptedException e) {
+			throw new RuntimeException("The test was interrupted during delay", e);
+		}
 	}
 
 	/**
@@ -218,6 +230,9 @@ public abstract class GuiTestHelper {
 	 * @param millis The time in milliseconds to wait
 	 */
 	public void delay(int millis) {
+		delay();
+		
+		/* It looks like the new delay() implementation is better
 		if (stopped) {
 			throw new TestException("Test has been forced to stop");
 		}
@@ -230,7 +245,7 @@ public abstract class GuiTestHelper {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
 			throw new TestException("Delay has been interupted");
-		}
+		}*/
 	}
 
 	/**
@@ -525,6 +540,7 @@ public abstract class GuiTestHelper {
 		if (stopped) {
 			throw new TestException("Test has been forced to stop");
 		}
+		typeDelay();
 		typeNow(character);
 		typeDelay();
 	}
@@ -582,6 +598,7 @@ public abstract class GuiTestHelper {
 		if (stopped) {
 			throw new TestException("Test has been forced to stop");
 		}
+		typeDelay();
 		pressAndReleaseNow(keycode);
 		typeDelay();
 	}
