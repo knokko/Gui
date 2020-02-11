@@ -32,6 +32,17 @@ public class FloatEditField extends TextEditField {
 		}
 	}
 	
+	@Override
+	protected void paste(String clipboardContent) {
+		clipboardContent.chars().forEachOrdered(character -> {
+			if ((text.isEmpty() && character == '-') || character == '.' ||
+					(character >= '0' && character <= '9')) {
+				this.text += (char) character;
+			}
+		 });
+		updateTexture();
+	}
+	
 	public Option.Double getDouble() {
 		try {
 			double result = Double.parseDouble(getText());

@@ -25,6 +25,17 @@ public class IntEditField extends TextEditField {
 			super.keyPressed(character);
 		}
 	}
+	
+	@Override
+	protected void paste(String clipboardContent) {
+		clipboardContent.chars().forEachOrdered(character -> {
+			if ((text.isEmpty() && character == '-') ||
+					(character >= '0' && character <= '9')) {
+				this.text += (char) character;
+			}
+		 });
+		updateTexture();
+	}
 
 	/**
 	 * This method attempts to parse the text in this IntEditField to an integer.

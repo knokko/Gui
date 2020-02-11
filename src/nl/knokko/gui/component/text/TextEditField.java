@@ -23,7 +23,14 @@
  *******************************************************************************/
 package nl.knokko.gui.component.text;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.geom.Point2D.Float;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -92,7 +99,7 @@ public class TextEditField extends TextComponent implements EditableComponent {
 	
 	@Override
 	public void keyPressed(char character){
-		if(active){
+		if(active && !state.getWindow().getInput().isKeyDown(KeyCode.KEY_CONTROL)){
 			text += character;
 			updateTexture();
 		}
@@ -105,13 +112,75 @@ public class TextEditField extends TextComponent implements EditableComponent {
 			state.getWindow().markChange();
 		}
 		if(active){
-			if(key == KeyCode.KEY_BACKSPACE && text.length() > 0){
+			if (state.getWindow().getInput().isKeyDown(KeyCode.KEY_CONTROL)) {
+				if (key == KeyCode.KEY_V) {
+					String clipboardText = getClipboardText();
+					paste(clipboardText);
+				} else if (key == KeyCode.KEY_C && !text.isEmpty()) {
+					setClipboardText(text);
+				} else if (key == KeyCode.KEY_X) {
+					setClipboardText(text);
+					text = "";
+					updateTexture();
+				}
+			} else if(key == KeyCode.KEY_BACKSPACE && text.length() > 0){
 				text = text.substring(0, text.length() - 1);
 				updateTexture();
-			}
-			if(key == KeyCode.KEY_DELETE && text.length() > 0){
+			} else if(key == KeyCode.KEY_DELETE && text.length() > 0){
 				text = text.substring(0);
 				updateTexture();
+			}
+		}
+	}
+	
+	protected void paste(String clipboardText) {
+		if (clipboardText != null) {
+			text += clipboardText;
+		} else {
+			text += "Can't paste";
+		}
+		updateTexture();
+	}
+	
+	protected String getClipboardText() {
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		if (clipboard != null) {
+			try {
+				Transferable clipboardContent = clipboard.getContents(this);
+				return (String) clipboardContent.getTransferData(DataFlavor.stringFlavor);
+			} catch (IllegalStateException ex) {
+				// See explanation of setClipboardText
+				return null;
+			} catch (UnsupportedFlavorException e) {
+				// Ok, there is currently no text on the clipboard.
+				// Let's just ignore it
+				return null;
+			} catch (IOException e) {
+				// The requested clipboard data is no longer available, so we can't paste it
+				return null;
+			}
+		} else {
+			// See explanation of setClipboardText
+			return null;
+		}
+	}
+	
+	protected void setClipboardText(String text) {
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		/*
+		 * It is possible that this method returns null, for instance when the
+		 * operating system doesn't support a clipboard. If that is the case,
+		 * we ignore it because there is nothing we can do about it.
+		 */
+		if (clipboard != null) {
+			try {
+				clipboard.setContents(new StringSelection(text), null);
+			} catch (IllegalStateException ex) {
+				/*
+				 * This can occur if the clipboard is currently unavailable for
+				 * some reason. When this occurs, we simply do nothing and the
+				 * user can try to copy again.
+				 */
 			}
 		}
 	}
