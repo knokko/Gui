@@ -35,6 +35,8 @@ import nl.knokko.gui.color.GuiColor;
 import nl.knokko.gui.texture.GuiTexture;
 import nl.knokko.gui.window.AWTGuiWindow;
 
+import nl.knokko.gui.render.RenderCommand;
+
 public class AWTGuiRenderer extends GuiRenderer {
 	
 	private Graphics g;

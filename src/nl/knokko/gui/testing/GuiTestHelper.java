@@ -1,5 +1,6 @@
 package nl.knokko.gui.testing;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -644,7 +645,7 @@ public abstract class GuiTestHelper {
 		Random random = new Random();
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < height; y++) {
-				image.setRGB(x, y, random.nextInt());
+				image.setRGB(x, y, new Color(random.nextInt(), false).getRGB());
 			}
 		}
 		if (destination != null) {

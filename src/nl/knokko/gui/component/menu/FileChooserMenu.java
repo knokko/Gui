@@ -55,7 +55,7 @@ public class FileChooserMenu extends GuiMenu {
 
 	protected final FileListener listener;
 	protected final FileFilter filter;
-	protected final GuiComponent returnMenu;
+	protected final GuiComponent cancelMenu;
 	protected FileList list;
 
 	protected File selectedFile;
@@ -65,10 +65,10 @@ public class FileChooserMenu extends GuiMenu {
 	protected final Properties cancelProps, cancelHover, selectProps, selectHover;
 	protected final GuiColor background, listBackground;
 
-	public FileChooserMenu(GuiComponent returnMenu, FileListener listener, FileFilter filter, 
+	public FileChooserMenu(GuiComponent cancelMenu, FileListener listener, FileFilter filter, 
 			Properties cancelProps, Properties cancelHover, Properties selectProps, Properties selectHover,
 			GuiColor background, GuiColor listBackground) {
-		this.returnMenu = returnMenu;
+		this.cancelMenu = cancelMenu;
 		this.listener = listener;
 		this.filter = filter;
 		this.directory = new File("").getAbsoluteFile();
@@ -94,11 +94,10 @@ public class FileChooserMenu extends GuiMenu {
 		addComponent(list, 0f, 0.14f, 1f, 0.86f);
 		addComponent(new SimpleColorComponent(background), 0f, 0f, 1f, 0.14f);
 		addComponent(new TextButton("Cancel", cancelProps, cancelHover, () -> {
-			state.getWindow().setMainComponent(returnMenu);
+			state.getWindow().setMainComponent(cancelMenu);
 		}), 0.2f, 0.02f, 0.35f, 0.12f);
 		addComponent(new ConditionalTextButton("Select", selectProps, selectHover, () -> {
-			listener.onChoose(selectedFile);
-			state.getWindow().setMainComponent(returnMenu);
+			state.getWindow().setMainComponent(listener.onChoose(selectedFile));
 		}, () -> {
 			return selectedFile != null;
 		}), 0.6f, 0.02f, 0.75f, 0.12f);
@@ -177,7 +176,7 @@ public class FileChooserMenu extends GuiMenu {
 
 	public static interface FileListener {
 
-		void onChoose(File file);
+		GuiComponent onChoose(File file);
 	}
 
 	public static interface FileFilter {
