@@ -126,8 +126,8 @@ public final class TextBuilder {
 	
 	public static class Properties {
 		
-		public static final Font DEFAULT_BUTTON_FONT = new Font("TimesRoman", 0, 60);
-		public static final Font DEFAULT_EDIT_FONT = new Font("Verdana", Font.ITALIC, 60);
+		public static final Font DEFAULT_BUTTON_FONT = new Font("Open Sans, Lucida Sans", 0, 60);
+		public static final Font DEFAULT_EDIT_FONT = new Font("Open Sans, Lucida Sans", Font.ITALIC, 60);
 		
 		public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 		
