@@ -201,7 +201,7 @@ public abstract class GuiTestHelper {
 	 * setDelayTime() method can be used to set that delay time.
 	 */
 	public void delay() {
-		//delay(delayTime);
+		delay(delayTime);
 		try {
 			// Wait for the gui thread to complete execution
 			SwingUtilities.invokeAndWait(() -> {});
@@ -231,9 +231,7 @@ public abstract class GuiTestHelper {
 	 * @param millis The time in milliseconds to wait
 	 */
 	public void delay(int millis) {
-		delay();
 		
-		/* It looks like the new delay() implementation is better
 		if (stopped) {
 			throw new TestException("Test has been forced to stop");
 		}
@@ -246,7 +244,7 @@ public abstract class GuiTestHelper {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
 			throw new TestException("Delay has been interupted");
-		}*/
+		}
 	}
 
 	/**
