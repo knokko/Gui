@@ -27,6 +27,8 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Locale;
 
 import javax.swing.Icon;
 import javax.swing.filechooser.FileSystemView;
@@ -140,6 +142,14 @@ public class FileChooserMenu extends GuiMenu {
 		protected void setDirectory() {
 			clearComponents();
 			File[] files = directory.listFiles();
+			Arrays.sort(files, (a, b) -> {
+				if (a.isHidden() && !b.isHidden())
+					return 1;
+				if (!a.isHidden() && b.isHidden())
+					return -1;
+				return a.getName().toLowerCase(Locale.ROOT)
+					.compareTo(b.getName().toLowerCase(Locale.ROOT));
+			});
 			int index = 0;
 			for (File file : files) {
 				if (file.isDirectory() || filter.accept(file)) {
