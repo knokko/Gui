@@ -66,7 +66,7 @@ public class CharBuilder {
 		if (bounds.getWidth() > image.getWidth() || height > image.getHeight()) {
 			g.dispose();
 			if (bounds.getWidth() == 0 || height == 0)
-				return new ImageResult(new BufferedImage(0, 0, BufferedImage.TYPE_INT_ARGB), 1, 1);
+				return new ImageResult(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), 0, 0);
 			image = new BufferedImage((int) Math.ceil(bounds.getWidth()), height, BufferedImage.TYPE_INT_ARGB);
 			g = image.createGraphics();
 			g.setFont(font);
