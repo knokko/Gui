@@ -313,6 +313,18 @@ public class AWTGuiWindow extends GuiWindow {
 		}
 
 		public void mouseClicked(MouseEvent event) {
+			/*
+			 * Because even moving the mouse a little bit between pressing and
+			 * releasing causes Swing to consider it a drag event rather than a
+			 * click event, we use mouseReleased to handle clicks instead.
+			 */
+		}
+
+		public void mousePressed(MouseEvent event) {
+			input.setMouseDown(AWTMouseConverter.getMouseButton(event.getButton()));
+		}
+
+		public void mouseReleased(MouseEvent event) {
 			float x = getMouseX(frame, event.getX());
 			float y = getMouseY(frame, event.getY());
 			int button = AWTMouseConverter.getMouseButton(event.getButton());
@@ -321,13 +333,6 @@ public class AWTGuiWindow extends GuiWindow {
 				if(listener != null)
 					listener.postClick(x, y, button);
 			}
-		}
-
-		public void mousePressed(MouseEvent event) {
-			input.setMouseDown(AWTMouseConverter.getMouseButton(event.getButton()));
-		}
-
-		public void mouseReleased(MouseEvent event) {
 			input.setMouseUp(AWTMouseConverter.getMouseButton(event.getButton()));
 		}
 
