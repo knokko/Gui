@@ -168,6 +168,7 @@ public class AWTGuiWindow extends GuiWindow {
 			frame.setTitle(title);
 			frame.setVisible(true);
 			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			frame.setFocusTraversalKeysEnabled(false);
 			Listener l = new Listener();
 			frame.addKeyListener(l);
 			frame.addMouseListener(l);
@@ -197,6 +198,7 @@ public class AWTGuiWindow extends GuiWindow {
 			frame.setTitle(title);
 			frame.setVisible(true);
 			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			frame.setFocusTraversalKeysEnabled(false);
 			Listener l = new Listener();
 			frame.addKeyListener(l);
 			frame.addMouseListener(l);

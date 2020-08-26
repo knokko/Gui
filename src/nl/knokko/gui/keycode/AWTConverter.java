@@ -80,6 +80,7 @@ public class AWTConverter {
 		put(VK_ALT, KEY_ALT);
 		put(VK_SPACE, KEY_SPACE);
 		put(VK_CONTEXT_MENU, KEY_APPS);
+		put(VK_TAB, KEY_TAB);
 		
 		put(VK_F1, KEY_F1);
 		put(VK_F2, KEY_F2);

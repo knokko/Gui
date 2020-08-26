@@ -132,7 +132,7 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 
 	@Override
 	public Collection<ImageShowingComponent.Pair> getShowingComponents() {
-		if (component instanceof ImageShowingComponent) {
+		if (isActive() && component instanceof ImageShowingComponent) {
 			return ((ImageShowingComponent) component).getShowingComponents();
 		} else {
 			return Collections.emptyList();
@@ -141,7 +141,7 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 
 	@Override
 	public Collection<BufferedImage> getShownImages() {
-		if (component instanceof ImageShowingComponent) {
+		if (isActive() && component instanceof ImageShowingComponent) {
 			return ((ImageShowingComponent) component).getShownImages();
 		} else {
 			return Collections.emptyList();
@@ -150,7 +150,7 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 
 	@Override
 	public TextShowingComponent.Pair getShowingComponent(String text) {
-		if (component instanceof TextShowingComponent) {
+		if (isActive() && component instanceof TextShowingComponent) {
 			return ((TextShowingComponent) component).getShowingComponent(text);
 		} else {
 			return null;
@@ -159,7 +159,7 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 
 	@Override
 	public Collection<TextShowingComponent.Pair> getShowingComponents(String text) {
-		if (component instanceof TextShowingComponent) {
+		if (isActive() && component instanceof TextShowingComponent) {
 			return ((TextShowingComponent) component).getShowingComponents(text);
 		} else {
 			return Collections.emptyList();
@@ -168,7 +168,7 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 
 	@Override
 	public Collection<CheckableComponent.Pair> getCheckboxCenters() {
-		if (component instanceof CheckableComponent) {
+		if (isActive() && component instanceof CheckableComponent) {
 			return ((CheckableComponent) component).getCheckboxCenters();
 		} else {
 			return Collections.emptySet();
@@ -177,7 +177,7 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
 	
 	@Override
 	public Collection<EditableComponent.Pair> getEditableLocations() {
-		if (component instanceof EditableComponent) {
+		if (isActive() && component instanceof EditableComponent) {
 			return ((EditableComponent) component).getEditableLocations();
 		} else {
 			return Collections.emptySet();

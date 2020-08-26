@@ -29,11 +29,13 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Float;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import nl.knokko.gui.component.GuiComponent;
 import nl.knokko.gui.keycode.KeyCode;
 import nl.knokko.gui.mousecode.MouseCode;
 import nl.knokko.gui.render.GuiRenderer;
@@ -47,11 +49,24 @@ public class TextEditField extends TextComponent implements EditableComponent {
 	protected GuiTexture activeTexture;
 	protected Properties activeProperties;
 	
+	protected Point2D.Float tabSwitchPoint;
+	
 	protected boolean active;
 
 	public TextEditField(String text, Properties passiveProperties, Properties activeProperties) {
 		super(text, passiveProperties);
 		this.activeProperties = activeProperties;
+	}
+	
+	@Override
+	public void update() {
+		super.update();
+		if (tabSwitchPoint != null) {
+			state.getWindow().getMainComponent().click(
+					tabSwitchPoint.x, tabSwitchPoint.y, MouseCode.BUTTON_LEFT
+			);
+			tabSwitchPoint = null;
+		}
 	}
 	
 	@Override
@@ -129,6 +144,83 @@ public class TextEditField extends TextComponent implements EditableComponent {
 			} else if(key == KeyCode.KEY_DELETE && text.length() > 0){
 				text = text.substring(0);
 				updateTexture();
+			} else if (key == KeyCode.KEY_TAB) {
+				GuiComponent mainComponent = state.getWindow().getMainComponent();
+				if (mainComponent instanceof EditableComponent) {
+					
+					EditableComponent currentMenu = (EditableComponent) mainComponent;
+					Collection<EditableComponent.Pair> pairs = currentMenu.getEditableLocations();
+					EditableComponent.Pair bestPair = null;
+					
+					// Biggest midY is most important
+					// Then biggest midX
+					
+					if (state.getWindow().getInput().isKeyDown(KeyCode.KEY_SHIFT)) {
+						
+						// Go to previous edit field
+						for (EditableComponent.Pair pair : pairs) {
+							if (pair.getLocation().y >= state.getMidY()) {
+								
+								boolean isCandidate = false;
+								if (pair.getLocation().y == state.getMidY()) {
+									isCandidate = pair.getLocation().x < state.getMidX();
+								} else {
+									isCandidate = true;
+								}
+								
+								if (isCandidate) {
+									if (bestPair == null) {
+										bestPair = pair;
+									} else {
+										if (pair.getLocation().y < bestPair.getLocation().y) {
+											bestPair = pair;
+										} else if (pair.getLocation().y == bestPair.getLocation().y) {
+											if (pair.getLocation().x > bestPair.getLocation().x) {
+												bestPair = pair;
+											}
+										}
+									}
+								}
+							}
+						}
+						
+						if (bestPair != null) {
+							tabSwitchPoint = bestPair.getLocation();
+						}
+					} else {
+						
+						// Go to next edit field
+						for (EditableComponent.Pair pair : pairs) {
+							if (pair.getLocation().y <= state.getMidY()) {
+								
+								boolean isCandidate = false;
+								if (pair.getLocation().y == state.getMidY()) {
+									isCandidate = pair.getLocation().x > state.getMidX();
+								} else {
+									isCandidate = true;
+								}
+								
+								if (isCandidate) {
+									if (bestPair == null) {
+										bestPair = pair;
+									} else {
+										if (pair.getLocation().y > bestPair.getLocation().y) {
+											bestPair = pair;
+										} else if (pair.getLocation().y == bestPair.getLocation().y) {
+											if (pair.getLocation().x < bestPair.getLocation().x) {
+												bestPair = pair;
+											}
+										}
+									}
+								}
+							}
+						}
+						
+						if (bestPair != null) {
+							tabSwitchPoint = bestPair.getLocation();
+						}
+					}
+				}
 			}
 		}
 	}

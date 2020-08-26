@@ -70,10 +70,9 @@ public final class KeyCode {
 	
 	public static final int KEY_ESCAPE = 36;
 	public static final int KEY_GRAVE = 37;
-	//awt doesn't support Tab key
 	public static final int KEY_CAPSLOCK = 38;
 	public static final int KEY_SHIFT = 39;//awt doesn't discriminate between left and right shift
-	public static final int KEY_CONTROL = 40;//awt doesn't give discriminate between left and right shift
+	public static final int KEY_CONTROL = 40;//awt doesn't give discriminate between left and right control
 	//awt nor lwjgl supports fn key
 	//awt nor lwjgl supports windows key
 	public static final int KEY_ALT = 41;
@@ -137,6 +136,8 @@ public final class KeyCode {
 	public static final int KEY_UP = 88;
 	public static final int KEY_RIGHT = 89;
 	public static final int KEY_DOWN = 90;
+	
+	public static final int KEY_TAB = 91;
 	
 	//space for keys that I can add later on
 	
