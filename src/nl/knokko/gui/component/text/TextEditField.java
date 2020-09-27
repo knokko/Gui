@@ -114,7 +114,8 @@ public class TextEditField extends TextComponent implements EditableComponent {
 	
 	@Override
 	public void keyPressed(char character){
-		if(active && !state.getWindow().getInput().isKeyDown(KeyCode.KEY_CONTROL)){
+		if(active && !state.getWindow().getInput().isKeyDown(KeyCode.KEY_CONTROL)
+				&& character != '\t'){
 			text += character;
 			updateTexture();
 		}
