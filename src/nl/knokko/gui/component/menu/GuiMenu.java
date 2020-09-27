@@ -35,6 +35,7 @@ import nl.knokko.gui.component.AbstractGuiComponent;
 import nl.knokko.gui.component.GuiComponent;
 import nl.knokko.gui.component.state.GuiComponentState;
 import nl.knokko.gui.component.state.RelativeComponentState;
+import nl.knokko.gui.component.text.TextEditField;
 import nl.knokko.gui.keycode.KeyCode;
 import nl.knokko.gui.render.GuiRenderer;
 import nl.knokko.gui.testing.CheckableComponent;
@@ -86,6 +87,23 @@ implements TextShowingComponent, ImageShowingComponent, CheckableComponent, Edit
     		refreshMovement();
     		directRefresh = true;
     		didInit = true;
+    	}
+    	
+    	// Focus text edit fields if there is only 1
+    	if (state.getWindow().getMainComponent() == this) {
+	    	int counter = 0;
+	    	for (SubComponent subComponent : components) {
+	    		if (subComponent.getComponent() instanceof TextEditField) {
+	    			counter++;
+	    		}
+	    	}
+	    	if (counter == 1) {
+	    		for (SubComponent subComponent : components) {
+	        		if (subComponent.getComponent() instanceof TextEditField) {
+	        			((TextEditField) subComponent.getComponent()).setFocus();
+	        		}
+	        	}
+	    	}
     	}
 	}
 	
