@@ -228,6 +228,7 @@ public class TextEditField extends TextComponent implements EditableComponent {
 	
 	protected void paste(String clipboardText) {
 		if (clipboardText != null) {
+			clipboardText = clipboardText.replace("\n", "").replace("\r", "");
 			text += clipboardText;
 		} else {
 			text += "Can't paste";
