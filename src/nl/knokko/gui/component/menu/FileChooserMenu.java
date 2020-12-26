@@ -39,8 +39,10 @@ import nl.knokko.gui.component.GuiComponent;
 import nl.knokko.gui.component.image.SimpleImageComponent;
 import nl.knokko.gui.component.simple.SimpleColorComponent;
 import nl.knokko.gui.component.text.ConditionalTextButton;
+import nl.knokko.gui.component.text.EagerTextEditField;
 import nl.knokko.gui.component.text.TextButton;
 import nl.knokko.gui.component.text.dynamic.DynamicTextButton;
+import nl.knokko.gui.component.text.dynamic.DynamicTextComponent;
 import nl.knokko.gui.util.TextBuilder.Properties;
 
 public class FileChooserMenu extends GuiMenu {
@@ -102,7 +104,14 @@ public class FileChooserMenu extends GuiMenu {
 			state.getWindow().setMainComponent(listener.onChoose(selectedFile));
 		}, () -> {
 			return selectedFile != null;
-		}), 0.6f, 0.02f, 0.75f, 0.12f);
+		}), 0.5f, 0.02f, 0.65f, 0.12f);
+		addComponent(new DynamicTextComponent("Search:", Properties.createLabel()), 
+				0.7f, 0.02f, 0.8f, 0.12f);
+		addComponent(new EagerTextEditField("", 
+				Properties.createEdit(), Properties.createEdit(Color.GREEN), newText -> {
+					this.filterText = newText;
+					list.setDirectory();
+		}), 0.825f, 0.02f, 0.975f, 0.12f);
 		addComponent(new SimpleColorComponent(background), 0f, 0.86f, 1f, 1f);
 		addComponent(new ConditionalTextButton("Go up", cancelProps, cancelHover, () -> {
 			setDirectory(parentDirectory);
@@ -117,6 +126,8 @@ public class FileChooserMenu extends GuiMenu {
 		list.setDirectory();
 		state.getWindow().markChange();
 	}
+	
+	private String filterText = "";
 
 	private static final GuiColor DEFAULT_LIST_BACKGROUND = new SimpleGuiColor(0, 0, 150);
 
@@ -152,7 +163,9 @@ public class FileChooserMenu extends GuiMenu {
 			});
 			int index = 0;
 			for (File file : files) {
-				if (file.isDirectory() || filter.accept(file)) {
+				if ((file.isDirectory() || filter.accept(file)) 
+						&& file.getName().toLowerCase(Locale.ROOT)
+						.contains(filterText.toLowerCase(Locale.ROOT))) {
 
 					// TODO Reuse buffered images containing icons
 					Icon icon = FileSystemView.getFileSystemView().getSystemIcon(file);
